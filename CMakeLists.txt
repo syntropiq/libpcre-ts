@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 4.0)
 project(libpcre-wasm)
 
 # Set Emscripten as the target
@@ -29,14 +29,14 @@ set(PCRE_SUPPORT_LIBEDIT OFF CACHE BOOL "Disable Editline support for WebAssembl
 # Add the libpcre subdirectory
 add_subdirectory(libpcre)
 
-# Create a wrapper library that combines all PCRE libraries
-add_library(pcre-combined STATIC
-    # We'll add our wrapper source files here
+# Create a wrapper library that will be compiled to WebAssembly
+add_executable(pcre-wasm
+    # Our wrapper source files
     wasm-wrapper.cpp
 )
 
-# Link all PCRE libraries into our combined library
-target_link_libraries(pcre-combined 
+# Link all PCRE libraries into our WebAssembly module
+target_link_libraries(pcre-wasm 
     pcre 
     pcreposix
     pcre16
@@ -45,28 +45,29 @@ target_link_libraries(pcre-combined
 
 # Set up Emscripten-specific options
 set(EMSCRIPTEN_LINK_FLAGS
-    "-s EXPORT_ES6=1"
-    "-s MODULARIZE=1" 
-    "-s USE_ES6_IMPORT_META=0"
-    "-s ENVIRONMENT=web,webview,worker,node"
-    "-s ALLOW_MEMORY_GROWTH=1"
-    "-s INITIAL_MEMORY=16MB"
-    "-s MAXIMUM_MEMORY=2GB"
-    "-s STACK_SIZE=1MB"
-    "-s EXPORTED_RUNTIME_METHODS=['ccall','cwrap','getValue','setValue','UTF8ToString','stringToUTF8','allocate','ALLOC_NORMAL']"
-    "-s EXPORTED_FUNCTIONS=['_malloc','_free']"
+    "-sEXPORT_ES6=1"
+    "-sMODULARIZE=1"
+    "-sENVIRONMENT=web,webview,worker,node"
+    "-sALLOW_MEMORY_GROWTH=1"
+    "-sINITIAL_MEMORY=16MB"
+    "-sMAXIMUM_MEMORY=2GB"
+    "-sSTACK_SIZE=1MB"
+    "-sEXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\",\"getValue\",\"setValue\",\"UTF8ToString\",\"stringToUTF8\",\"allocate\",\"ALLOC_NORMAL\"]"
+    "-sEXPORTED_FUNCTIONS=[\"_malloc\",\"_free\"]"
     "--bind"
 )
 
 # Set target properties for the WASM output
-set_target_properties(pcre-combined PROPERTIES
-    LINK_FLAGS "${EMSCRIPTEN_LINK_FLAGS}"
+set_target_properties(pcre-wasm PROPERTIES
     OUTPUT_NAME "libpcre"
     SUFFIX ".js"
 )
 
+# Add link options for Emscripten
+target_link_options(pcre-wasm PRIVATE ${EMSCRIPTEN_LINK_FLAGS})
+
 # Include directories for our wrapper
-target_include_directories(pcre-combined PRIVATE
+target_include_directories(pcre-wasm PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/libpcre
     ${CMAKE_CURRENT_BINARY_DIR}/libpcre
 )

@@ -51,8 +51,9 @@ emcc -O2 -I build/libpcre -I libpcre \
 For convenience, you can use the build script:
 
 ```bash
-./build.sh
+./scripts/build.sh
 ```
+> **Note:** Always run the build script from the project root. Output will be in the `build/` directory in the project root.
 
 ## Usage
 

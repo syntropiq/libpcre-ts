@@ -21,7 +21,12 @@ if ! command -v cmake &> /dev/null; then
     exit 1
 fi
 
-# Create build directory
+
+# Always run from project root, create build directory in root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ROOT_DIR="$SCRIPT_DIR/.."
+cd "$ROOT_DIR"
+
 echo "📁 Creating build directory..."
 mkdir -p build
 cd build
@@ -46,7 +51,7 @@ emcmake cmake .. \
 echo "🔨 Building WebAssembly module..."
 emmake make -j$(nproc)
 
-cd ..
+cd "$ROOT_DIR"
 
 # Check if the build was successful
 if [ -f "build/libpcre.js" ] && [ -f "build/libpcre.wasm" ]; then

@@ -10,7 +10,9 @@
     "build:wasm": "mkdir -p build && cd build && emcmake cmake .. && emmake make -j$(nproc)",
     "build:types": "node scripts/generate-types.js",
     "clean": "rm -rf build dist",
-    "test": "node test/test.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:legacy": "node test/test.js",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build",
     "prepack": "npm run build"

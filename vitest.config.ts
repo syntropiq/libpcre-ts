@@ -18,6 +18,8 @@ export default defineConfig({
         minThreads: 1,
       },
     },
+    // Stop on first failure
+    bail: 1,
     // Add coverage if desired
     coverage: {
       provider: 'v8',

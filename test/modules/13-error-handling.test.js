@@ -28,9 +28,9 @@ describe('Error Handling and Edge Cases', () => {
   test('should handle empty patterns', () => {
     try {
       const regex = pcre.compile('');
-      const result = pcre.exec(regex, 'test');
+      const result = regex.exec('test');
       expect(result).toBeTruthy();
-      expect(result.value).toBe('');
+      expect(result[0].value).toBe('');
     } catch (error) {
       console.error('FATAL ERROR in empty patterns test:', error);
       throw error;
@@ -40,13 +40,11 @@ describe('Error Handling and Edge Cases', () => {
   test('should handle null and undefined inputs', () => {
     try {
       const regex = pcre.compile('test');
-      
       expect(() => {
-        pcre.exec(regex, null);
+        regex.exec(null);
       }).toThrow();
-      
       expect(() => {
-        pcre.exec(regex, undefined);
+        regex.exec(undefined);
       }).toThrow();
     } catch (error) {
       console.error('FATAL ERROR in null/undefined inputs test:', error);
@@ -58,9 +56,9 @@ describe('Error Handling and Edge Cases', () => {
     try {
       const regex = pcre.compile('test');
       const longString = 'a'.repeat(10000) + 'test' + 'b'.repeat(10000);
-      const result = pcre.exec(regex, longString);
+      const result = regex.exec(longString);
       expect(result).toBeTruthy();
-      expect(result.value).toBe('test');
+      expect(result[0].value).toBe('test');
     } catch (error) {
       console.error('FATAL ERROR in long strings test:', error);
       throw error;

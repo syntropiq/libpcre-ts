@@ -1,103 +1,310 @@
-# libpcre-ts
+# @syntropiq/libpcre-ts
 
-A WebAssembly build of the original PCRE (Perl Compatible Regular Expressions) library with TypeScript bindings. This provides full PCRE functionality in JavaScript/TypeScript environments, including features not available in JavaScript's built-in regex engine.
+**WebAssembly wrapper for the original PCRE (Perl Compatible Regular Expressions) library with TypeScript bindings.**
 
-## Features
+This package wraps the **original** PCRE library (not PCRE2), which is more permissive and forgiving than modern regex engines. While the original PCRE is considered "antiquated," this makes it valuable for compatibility with older systems and more lenient pattern matching.
 
-- **Full PCRE compatibility** - Real PCRE regex engine, not a JavaScript reimplementation
-- **WebAssembly performance** - Near-native performance in browsers and Node.js
+## Why Use This?
+
+- **Legacy compatibility** - Works with patterns that newer regex engines reject
+- **More permissive** - The original PCRE accepts patterns that PCRE2 considers invalid
+- **WebAssembly performance** - Near-native speed in browsers and Node.js
+- **Full PCRE features** - Named groups, lookbehinds, recursion (features missing from JavaScript regex)
 - **TypeScript support** - Complete type definitions included
-- **Multiple APIs** - Both simple convenience functions and full regex objects
-- **Capture groups** - Full support for named and numbered capture groups
-- **Unicode support** - UTF-8 and Unicode properties enabled
-- **All PCRE flags** - Case insensitive, multiline, dotall, extended, and more
+
+Perfect for porting legacy regex patterns or when you need maximum pattern compatibility.
+
+## Installation
+
+```bash
+npm install @syntropiq/libpcre-ts
+```
 
 ## Quick Start
 
-### Prerequisites
+```typescript
+import { PCRE } from '@syntropiq/libpcre-ts';
 
-- [Emscripten SDK](https://emscripten.org/docs/getting_started/downloads.html) (for building)
-- CMake 3.10+
-- Git
+const pcre = new PCRE();
+await pcre.init();
 
-### Installation & Building
+// Quick pattern testing
+const isMatch = pcre.test('\\d+', 'Hello 123');
+console.log(isMatch); // true
 
-```bash
-# Clone the repository
-git clone git@github.com:syntropiq/libpcre-ts.git
-cd libpcre-ts
-
-# Initialize and update the PCRE submodule
-git submodule init
-git submodule update
-
-# Build the WebAssembly module
-mkdir build
-cd build
-emcmake cmake ..
-emmake make -j4
-cd ..
-
-# Compile to WebAssembly with JavaScript bindings
-emcc -O2 -I build/libpcre -I libpcre \
-  build/libpcre/libpcre.a build/libpcre/libpcreposix.a \
-  wasm-wrapper.cpp -o build/libpcre.js \
-  --bind -s MODULARIZE=1 -s EXPORT_NAME=PCRE \
-  -s ENVIRONMENT=web,node -s ALLOW_MEMORY_GROWTH=1
+// Get match details
+const matches = pcre.match('(\\w+)\\s+(\\d+)', 'Hello 123');
+console.log(matches); // [{ value: 'Hello 123', index: 0, length: 9 }]
 ```
 
-### Build Script
+## Compiled Pattern Usage
 
-For convenience, you can use the build script:
-
-```bash
-./scripts/build.sh
-```
-> **Note:** Always run the build script from the project root. Output will be in the `build/` directory in the project root.
-
-## Usage
-
-### Node.js
-
-```javascript
-const PCRE = require('./build/libpcre.js');
-
-async function example() {
-  const pcre = await PCRE();
-  
-  // Simple test
-  const hasMatch = pcre.quickTest('[a-z]+', 'hello world', 0);
-  console.log('Has match:', hasMatch); // true
-  
-  // Get match details
-  const match = pcre.quickMatch('([a-z]+)\\s+([a-z]+)', 'hello world', 0);
-  console.log('Match:', match);
-  // { success: true, match: 'hello world', start: 0, end: 11, groups: ['hello', 'world'] }
-  
-  // Full regex object
-  const regex = new pcre.PCRERegex('[A-Z]+', pcre.PCRE_CASELESS);
-  const result = regex.exec('Hello World', 0);
-  console.log('Result:', result);
-  regex.delete(); // Clean up memory
-}
-
-example();
-```
-
-### TypeScript
+For better performance with repeated use:
 
 ```typescript
-import PCREModule from './build/libpcre.js';
+import { PCRE } from '@syntropiq/libpcre-ts';
 
-interface PCREInstance {
-  quickTest(pattern: string, text: string, options: number): boolean;
-  quickMatch(pattern: string, text: string, options: number): MatchResult;
-  PCRERegex: new (pattern: string, options: number) => PCRERegex;
-  // ... constants and other methods
+const pcre = new PCRE();
+await pcre.init();
+
+// Compile pattern once
+const regex = pcre.compile('(?P<word>\\w+)\\s+(?P<number>\\d+)');
+
+// Use multiple times
+console.log(regex.test('Hello 123')); // true
+console.log(regex.test('No numbers here')); // false
+
+// Get matches with named groups
+const matches = regex.exec('Hello 123');
+if (matches) {
+  console.log(matches[0].value); // 'Hello 123'
+  console.log(matches[1].value); // 'Hello' (first capturing group)
+  console.log(matches[2].value); // '123' (second capturing group)
 }
 
-async function example() {
-  const pcre: PCREInstance = await PCREModule();
+// Get named group mappings
+const namedGroups = regex.getNamedGroups();
+console.log(namedGroups); // { word: 1, number: 2 }
+```
+
+## Advanced Features
+
+```typescript
+// Case-insensitive matching with constants
+const regex = pcre.compile('hello', pcre.constants.CASELESS);
+console.log(regex.test('HELLO')); // true
+
+// Global matching (find all occurrences)
+const allMatches = regex.globalMatch('Hello hello HELLO');
+console.log(allMatches.length); // 3
+
+// String replacement
+const result = regex.replace('Hello world', 'Hi', true);
+console.log(result); // 'Hi world'
+```
+
+## PCRE-Specific Features
+
+Features not available in JavaScript's built-in RegExp:
+
+```typescript
+// Named capture groups (Python-style)
+const datePattern = '(?P<year>\\d{4})-(?P<month>\\d{2})-(?P<day>\\d{2})';
+const regex = pcre.compile(datePattern);
+const namedGroups = regex.getNamedGroups();
+console.log(namedGroups); // { year: 1, month: 2, day: 3 }
+
+// Lookbehind assertions
+const pricePattern = '(?<=\\$)\\d+\\.\\d{2}';
+const priceMatch = pcre.match(pricePattern, 'Price: $19.99');
+
+// Recursive patterns (balanced parentheses)
+const balancedParens = '\\((?:[^()]++|(?R))*\\)';
+const isBalanced = pcre.test(balancedParens, '(a(b(c)d)e)');
+```
+
+## Constants and Options
+
+```typescript
+// Common PCRE options
+const options = 
+  pcre.constants.CASELESS |      // Case-insensitive
+  pcre.constants.MULTILINE |     // ^ and $ match line boundaries  
+  pcre.constants.DOTALL;         // . matches newlines
+
+const regex = pcre.compile('pattern', options);
+```
+
+Available constants:
+- `CASELESS` - Case-insensitive matching
+- `MULTILINE` - `^` and `$` match line boundaries
+- `DOTALL` - `.` matches newlines
+- `EXTENDED` - Ignore whitespace and comments
+- `UTF8` - Enable UTF-8 mode
+- `UNGREEDY` - Make quantifiers non-greedy by default
+
+## Error Handling
+
+```typescript
+try {
+  const regex = pcre.compile('[invalid pattern');
+} catch (error) {
+  console.error('Pattern compilation failed:', error.message);
+}
+```
+
+## Performance Tips
+
+1. **Compile once, use many times**: Use `pcre.compile()` for patterns you'll reuse
+2. **Use quick methods for one-off tests**: Use `pcre.test()` and `pcre.match()` for single use
+3. **Consider options**: Some PCRE options can significantly impact performance
+
+## Browser Support
+
+Works in all modern browsers that support WebAssembly. For older browsers, include a WebAssembly polyfill.
+
+## Node.js Support
+
+Works in Node.js 12+ with WebAssembly support.
+
+## Contributing
+
+This library wraps the original PCRE C library. For bug reports or feature requests, please open an issue on [GitHub](https://github.com/syntropiq/libpcre-ts).
+
+## License
+
+BSD-3-Clause (same as PCRE)
+
+---
+
+**Note**: This library wraps the original PCRE, not PCRE2. While PCRE2 is the modern standard, the original PCRE can be more permissive with certain patterns, making it useful for legacy compatibility and forgiving pattern matching.
+
+```
+    'Contact us at support@example.com',
+    'Send reports to admin@test.org',
+    'No email here!'
+  ];
+```
+
+```
+  emails.forEach((text, i) => {
+    const result = emailRegex.exec(text, 0);
+    console.log(`Email ${i + 1}:`, result.success ? result.match : 'Not found');
+  });
+  
+  // Important: Clean up memory
+  emailRegex.delete();
+}
+```
+
+## API Reference
+
+### Quick Functions
+
+```typescript
+// Test if pattern matches (boolean result)
+pcre.quickTest(pattern: string, text: string, options: number): boolean
+
+// Get detailed match information
+pcre.quickMatch(pattern: string, text: string, options: number): MatchResult
+```
+
+### PCRERegex Class
+
+```typescript
+// Compile a regex pattern
+const regex = new pcre.PCRERegex(pattern: string, options: number);
+
+// Execute against text
+const result = regex.exec(text: string, startOffset: number): MatchResult;
+
+// Clean up (important!)
+regex.delete(): void;
+```
+
+### Match Result
+
+```typescript
+interface MatchResult {
+  success: boolean;    // Whether the pattern matched
+  match?: string;      // The full matched text
+  start?: number;      // Start position of match
+  end?: number;        // End position of match  
+  groups?: string[];   // Capture groups (numbered)
+}
+```
+
+### Common Options
+
+```typescript
+pcre.PCRE_CASELESS      // Case insensitive matching
+pcre.PCRE_MULTILINE     // ^ and $ match line boundaries
+pcre.PCRE_DOTALL        // . matches newlines
+pcre.PCRE_EXTENDED      // Ignore whitespace in patterns
+pcre.PCRE_UTF8          // Enable UTF-8 mode
+```
+
+## Node.js vs Browser
+
+### Node.js
+```javascript
+const PCRE = require('@syntropiq/libpcre-ts');
+// Works out of the box
+```
+
+### Browser (ES Modules)
+```javascript
+import PCRE from '@syntropiq/libpcre-ts';
+// Ensure your bundler supports WebAssembly
+```
+
+### Browser (Script Tag)
+```html
+<script src="https://unpkg.com/@syntropiq/libpcre-ts/dist/index.js"></script>
+<script>
+  PCRE().then(pcre => {
+    // Use pcre here
+  });
+</script>
+```
+
+## Memory Management
+
+**Important**: Always call `.delete()` on compiled regex objects to prevent memory leaks:
+
+```typescript
+const regex = new pcre.PCRERegex('pattern', 0);
+// ... use regex ...
+regex.delete(); // Essential!
+
+// Or use try/finally
+const regex = new pcre.PCRERegex('pattern', 0);
+try {
+  // Use regex
+} finally {
+  regex.delete();
+}
+```
+
+## Error Handling
+
+```typescript
+try {
+  // Invalid regex pattern
+  const regex = new pcre.PCRERegex('[invalid', 0);
+} catch (error) {
+  console.error('Pattern compilation failed:', error.message);
+}
+
+// Check match results
+const result = pcre.quickMatch('pattern', 'text', 0);
+if (!result.success) {
+  console.log('No match found');
+}
+```
+
+## PCRE vs JavaScript Regex
+
+| Feature | JavaScript | PCRE |
+|---------|------------|------|
+| Lookbehind | Limited | Full support |
+| Named groups | ✅ | ✅ |
+| Recursion | ❌ | ✅ |
+| Unicode properties | Limited | Full |
+| Pattern strictness | Strict | Permissive |
+
+## Contributing
+
+Found a bug or want to contribute? Check out our [GitHub repository](https://github.com/syntropiq/libpcre-ts).
+
+## License
+
+- PCRE library: BSD-style license
+- Wrapper code: MIT license
+
+---
+
+**Note**: This wraps the original PCRE library (version 8.x), not the newer PCRE2. While PCRE2 is more modern, the original PCRE's permissive nature makes it valuable for compatibility scenarios.
   
   // Use with full type safety
   const regex = new pcre.PCRERegex('\\d+', 0);
@@ -315,7 +522,7 @@ PCRE uses slightly different syntax than JavaScript. Check the [PCRE documentati
 
 ## Examples
 
-See the `examples/` directory for more detailed usage examples:
+See the `test/*` directory for more detailed usage examples:
 - Basic pattern matching
 - Complex regex features
 - Performance benchmarks

@@ -2,7 +2,7 @@
   "type": "module",
   "name": "@syntropiq/libpcre-ts",
   "version": "1.0.0",
-  "description": "WebAssembly build of libpcre with TypeScript bindings",
+  "description": "WebAssembly wrapper for the original PCRE library with TypeScript bindings. More permissive than modern regex engines.",
   "main": "dist/index.js",
   "types": "dist/libpcre.d.ts",
   "scripts": {
@@ -14,10 +14,7 @@
     "test:continue": "vitest run",
     "test:watch": "vitest",
     "test:performance": "vitest run test/performance.test.js --reporter=verbose",
-    "test:legacy": "node test/test.js",
-    "prepare": "npm run build",
-    "prepublishOnly": "npm run clean && npm run build",
-    "prepack": "npm run build"
+    "test:legacy": "node test/test.js"
   },
   "keywords": [
     "pcre",
@@ -26,7 +23,12 @@
     "wasm",
     "typescript",
     "pattern",
-    "matching"
+    "matching",
+    "legacy",
+    "compatibility",
+    "lookbehind",
+    "recursion",
+    "named-groups"
   ],
   "author": "Syntropiq",
   "license": "BSD-3-Clause",

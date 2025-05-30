@@ -1,8 +1,8 @@
 {
-  "name": "libpcre-ts",
+  "name": "@syntropiq/libpcre-ts",
   "version": "1.0.0",
   "description": "WebAssembly build of libpcre with TypeScript bindings",
-  "main": "dist/libpcre.js",
+  "main": "dist/index.js",
   "types": "dist/libpcre.d.ts",
   "scripts": {
     "build": "./scripts/build.sh",
@@ -10,7 +10,9 @@
     "build:types": "node scripts/generate-types.js",
     "clean": "rm -rf build dist",
     "test": "node test/test.js",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
+    "prepack": "npm run build"
   },
   "keywords": [
     "pcre",
@@ -21,8 +23,8 @@
     "pattern",
     "matching"
   ],
-  "author": "Your Name",
-  "license": "MIT",
+  "author": "Syntropiq",
+  "license": "BSD-3-Clause",
   "devDependencies": {
     "@types/emscripten": "^1.39.7",
     "typescript": "^5.0.0"
@@ -34,8 +36,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/yourusername/libpcre-ts.git"
+    "url": "git+https://github.com/syntropiq/libpcre-ts.git"
   },
+  "bugs": {
+    "url": "https://github.com/syntropiq/libpcre-ts/issues"
+  },
+  "homepage": "https://github.com/syntropiq/libpcre-ts#readme",
   "engines": {
     "node": ">=16.0.0"
   }

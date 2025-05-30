@@ -55,15 +55,22 @@ if [ -f "build/libpcre.js" ] && [ -f "build/libpcre.wasm" ]; then
     echo "   - build/libpcre.js"
     echo "   - build/libpcre.wasm"
     
-    # Run the type generation script
-    echo "📝 Generating TypeScript definitions..."
+    # Create dist directory and copy distribution files
+    echo "📝 Preparing distribution files..."
+    mkdir -p dist
+    
+    # Copy WASM artifacts
+    cp build/libpcre.js dist/
+    cp build/libpcre.wasm dist/
+    
+    # Generate TypeScript definitions and copy JS wrapper
     node scripts/generate-types.js
     
     echo "🎉 Build complete!"
     echo ""
     echo "Next steps:"
     echo "  1. Test with: npm test"
-    echo "  2. Use in your project by importing from dist/"
+    echo "  2. Publish with: npm publish"
 else
     echo "❌ Build failed - output files not found"
     exit 1

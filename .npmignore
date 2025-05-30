@@ -1,0 +1,46 @@
+# Source files
+src/
+scripts/
+test/
+tests/
+libpcre/
+
+# Build configuration
+CMakeLists.txt
+wasm-wrapper.cpp
+build.sh
+*.config.js
+*.config.ts
+
+# Development files
+.git/
+.gitignore
+.gitmodules
+*.md
+!README.md
+
+# Build artifacts that shouldn't be published
+build/CMakeCache.txt
+build/CMakeFiles/
+build/Makefile
+build/cmake_install.cmake
+
+# IDE and development
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs and temporary files
+*.log
+npm-debug.log*
+*.tmp
+*.temp
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache
+.cache/
+coverage/

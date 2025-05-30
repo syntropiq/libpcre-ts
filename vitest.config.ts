@@ -4,7 +4,6 @@ export default defineConfig({
   test: {
     environment: 'node',
     globals: true,
-    timeout: 60000, // 60 second timeout for stress tests
     testTimeout: 60000,
     hookTimeout: 60000,
     teardownTimeout: 60000,
@@ -31,7 +30,5 @@ export default defineConfig({
         'build/**',
       ],
     },
-    // Organize test output
-    reporter: ['verbose', 'html'],
   },
 });

@@ -14,53 +14,53 @@ describe('Quick Methods Integration', () => {
     }
   });
 
-  test('should work with quickMatch method', () => {
+  test('should work with match method (first match only)', () => {
     try {
-      const results = pcre.quickMatch('\\d+', '123 456 789');
+      const results = pcre.match('\\d+', '123 456 789');
       expect(Array.isArray(results)).toBe(true);
-      expect(results.length).toBe(3);
+      expect(results.length).toBe(1);
       expect(results[0].value).toBe('123');
-      expect(results[1].value).toBe('456');
-      expect(results[2].value).toBe('789');
     } catch (error) {
-      console.error('FATAL ERROR in quickMatch test:', error);
+      console.error('FATAL ERROR in match test:', error);
       throw error;
     }
   });
 
-  test('should work with quickTest method', () => {
+  test('should work with globalMatch method (all matches)', () => {
     try {
-      const result1 = pcre.quickTest('\\d+', '123');
-      const result2 = pcre.quickTest('\\d+', 'abc');
+      const regex = pcre.compile('\\d+');
+      const results = regex.globalMatch('123 456 789');
+      expect(Array.isArray(results)).toBe(true);
+      expect(results.length).toBe(3);
+      expect(results[0][0].value).toBe('123');
+      expect(results[1][0].value).toBe('456');
+      expect(results[2][0].value).toBe('789');
+    } catch (error) {
+      console.error('FATAL ERROR in globalMatch test:', error);
+      throw error;
+    }
+  });
+
+  test('should work with test method', () => {
+    try {
+      const result1 = pcre.test('\\d+', '123');
+      const result2 = pcre.test('\\d+', 'abc');
       
       expect(result1).toBe(true);
       expect(result2).toBe(false);
     } catch (error) {
-      console.error('FATAL ERROR in quickTest test:', error);
+      console.error('FATAL ERROR in test test:', error);
       throw error;
     }
   });
 
-  test('should work with quickReplace method', () => {
+  test('should work with replace method', () => {
     try {
-      const result = pcre.quickReplace('\\d+', 'X', '123 456');
+      const regex = pcre.compile('\\d+');
+      const result = regex.replace('123 456', 'X', true);
       expect(result).toBe('X X');
     } catch (error) {
-      console.error('FATAL ERROR in quickReplace test:', error);
-      throw error;
-    }
-  });
-
-  test('should work with quickSplit method', () => {
-    try {
-      const result = pcre.quickSplit('\\s+', 'one two three');
-      expect(Array.isArray(result)).toBe(true);
-      expect(result.length).toBe(3);
-      expect(result[0]).toBe('one');
-      expect(result[1]).toBe('two');
-      expect(result[2]).toBe('three');
-    } catch (error) {
-      console.error('FATAL ERROR in quickSplit test:', error);
+      console.error('FATAL ERROR in replace test:', error);
       throw error;
     }
   });

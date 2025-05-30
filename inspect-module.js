@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const PCRE = require('./build/libpcre.js');
+import PCRE from './build/libpcre.js';
 
 async function inspect() {
     try {

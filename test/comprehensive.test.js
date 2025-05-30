@@ -140,7 +140,7 @@ describe('Comprehensive PCRE Tests', () => {
       const patterns = [
         { pattern: '\\d+', input: 'abc123def', expected: '123' },
         { pattern: '\\w+', input: 'hello-world_123', expected: 'hello' },
-        { pattern: '\\s+', input: 'hello\\t\\n world', expected: '\\t\\n ' },
+        { pattern: '\\s+', input: 'hello\t\n world', expected: '\t\n ' },
         { pattern: '[a-z]+', input: 'Hello World', expected: 'ello' },
         { pattern: '[0-9]+', input: 'abc123def', expected: '123' },
       ];
@@ -228,7 +228,7 @@ describe('Comprehensive PCRE Tests', () => {
     test('should handle multiline mode', () => {
       const singleLine = pcre.compile('^test');
       const multiLine = pcre.compile('^test', pcre.constants.MULTILINE);
-      const input = 'hello\\ntest\\nworld';
+      const input = 'hello\ntest\nworld';
       
       expect(singleLine.exec(input)).toBeNull();
       expect(multiLine.exec(input)).toBeTruthy();
@@ -265,9 +265,11 @@ describe('Comprehensive PCRE Tests', () => {
       
       expect(result).toBeTruthy();
       const namedGroups = regex.getNamedGroups();
-      expect(namedGroups).toContain('year');
-      expect(namedGroups).toContain('month'); 
-      expect(namedGroups).toContain('day');
+      expect(namedGroups).toHaveProperty('year');
+      expect(namedGroups).toHaveProperty('month'); 
+      expect(namedGroups).toHaveProperty('day');
+      // Named groups return indices, not the actual values
+      expect(typeof namedGroups.year).toBe('number');
     });
 
     test('should handle nested groups', () => {
@@ -295,7 +297,9 @@ describe('Comprehensive PCRE Tests', () => {
       const regex = pcre.compile('\\w+(?!\\s+\\d+)');
       const result = regex.exec('test 123 hello world');
       expect(result).toBeTruthy();
-      expect(result[0].value).toBe('hello'); // Should skip 'test' due to negative lookahead
+      // The pattern finds the first word that's not followed by space+digits
+      // In "test 123 hello world", it matches part of "test" that doesn't violate the lookahead
+      expect(result[0].value).toBe('tes'); // Partial match that satisfies negative lookahead
     });
 
     test('should handle positive lookbehind', () => {
@@ -322,7 +326,7 @@ describe('Comprehensive PCRE Tests', () => {
 
   describe('Advanced PCRE Features', () => {
     test('should handle conditional patterns', () => {
-      const regex = pcre.compile('(foo)?(?(1)bar|baz)');
+      const regex = pcre.compile('^(foo)?(?(1)bar|baz)$');
       expect(regex.exec('foobar')).toBeTruthy();
       expect(regex.exec('baz')).toBeTruthy();
       expect(regex.exec('foobaz')).toBeNull();
@@ -438,7 +442,7 @@ describe('Comprehensive PCRE Tests', () => {
     });
 
     test('should handle phone number patterns', () => {
-      const phonePattern = '\\(?\\d{3}\\)?[-.]?\\d{3}[-.]?\\d{4}';
+      const phonePattern = '\\(?\\d{3}\\)?[-.\s]?\\d{3}[-.]?\\d{4}';
       const regex = pcre.compile(phonePattern);
       
       expect(regex.exec('(555) 123-4567')).toBeTruthy();
@@ -457,8 +461,8 @@ describe('Comprehensive PCRE Tests', () => {
     });
 
     test('should handle legal citation patterns', () => {
-      // Inspired by the reporters-db project
-      const citationPattern = '(\\d+)\\s+([A-Z][a-z.\\s]+)\\s+(\\d+)';
+      // Inspired by the reporters-db project - simplified for basic matching
+      const citationPattern = '\\d+\\s+[A-Z][A-Za-z.\\s\\d]+\\s+\\d+';
       const regex = pcre.compile(citationPattern);
       
       expect(regex.exec('123 F.3d 456')).toBeTruthy();
@@ -476,7 +480,7 @@ describe('Comprehensive PCRE Tests', () => {
     test('should match patterns quickly', () => {
       const result = pcre.match('(\\d+)', 'hello 123 world');
       expect(result).toBeTruthy();
-      expect(result[0]).toBe('123');
+      expect(result[0].value).toBe('123');
     });
 
     test('should handle quick methods with flags', () => {

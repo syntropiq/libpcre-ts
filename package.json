@@ -12,6 +12,7 @@
     "clean": "rm -rf build dist",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:performance": "vitest run test/performance.test.js --reporter=verbose",
     "test:legacy": "node test/test.js",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build",
@@ -30,6 +31,7 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "@types/emscripten": "^1.39.7",
+    "@vitest/ui": "^3.1.4",
     "typescript": "^5.0.0",
     "vitest": "^3.1.4"
   },

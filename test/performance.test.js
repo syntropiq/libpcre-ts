@@ -1,7 +1,28 @@
+/**
+ * OPTIONAL PERFORMANCE TESTS
+ * 
+ * These tests are machine-dependent and do not run by default.
+ * They measure relative performance characteristics, not absolute benchmarks.
+ * Results will vary significantly based on:
+ * - Hardware capabilities (CPU, memory)
+ * - System load and background processes
+ * - Node.js version and V8 optimizations
+ * - Operating system and architecture
+ * 
+ * To run these tests:
+ * npm run test:performance
+ * 
+ * Or to include them in regular test runs, remove the .skip from describe.skip below
+ */
+
 import { test, expect, beforeAll, describe } from 'vitest';
 import { PCRE } from '../dist/index.js';
 
-describe('PCRE Performance Benchmarks', () => {
+// Performance tests are optional and machine-dependent
+// Run with: npm run test:performance
+// These tests measure relative performance, not absolute benchmarks
+// Results will vary significantly based on hardware and system load
+describe.skip('PCRE Performance Benchmarks (Optional)', () => {
   let pcre;
   
   beforeAll(async () => {
@@ -368,3 +389,17 @@ describe('PCRE Performance Benchmarks', () => {
     });
   });
 });
+
+/*
+ * TO ENABLE PERFORMANCE TESTS:
+ * 
+ * 1. Remove .skip from the describe.skip above
+ * 2. Run: npm run test:performance
+ * 
+ * Or to include in regular tests:
+ * 1. Remove .skip from describe.skip
+ * 2. Run: npm test
+ * 
+ * Note: Performance results are highly machine-dependent and should
+ * be used for relative comparisons rather than absolute benchmarks.
+ */

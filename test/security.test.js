@@ -55,8 +55,9 @@ describe('PCRE Security and Robustness Tests', () => {
           console.log(`${name}: compiled in ${duration}ms`);
         } catch (error) {
           // Expected to fail on resource limits
-          expect(error.message).toMatch(/limit|memory|too|complex/i);
-          console.log(`${name}: safely limited (${error.message})`);
+          const message = error?.message || error?.toString() || 'Unknown error';
+          expect(message).toMatch(/limit|memory|too|complex/i);
+          console.log(`${name}: safely limited (${message})`);
         }
       });
     });
@@ -104,7 +105,8 @@ describe('PCRE Security and Robustness Tests', () => {
           console.log(`Overflow attempt ${index}: compiled successfully`);
         } catch (error) {
           // Expected to fail safely
-          expect(error.message).not.toMatch(/segmentation|signal/i);
+          const message = error?.message || error?.toString() || 'Unknown error';
+          expect(message).not.toMatch(/segmentation|signal/i);
           console.log(`Overflow attempt ${index}: safely rejected`);
         }
       });
@@ -148,8 +150,9 @@ describe('PCRE Security and Robustness Tests', () => {
         console.log('Large backreference handled successfully');
       } catch (error) {
         // May fail due to resource limits
-        expect(error.message).not.toMatch(/crash|segmentation/i);
-        console.log(`Resource limit error: ${error.message}`);
+        const message = error?.message || error?.toString() || 'Unknown error';
+        expect(message).not.toMatch(/crash|segmentation/i);
+        console.log(`Resource limit error: ${message}`);
       }
     });
 
@@ -218,7 +221,8 @@ describe('PCRE Security and Robustness Tests', () => {
           console.log(`Recursion test ${index}: ${duration}ms`);
         } catch (error) {
           // Expected to hit recursion limits
-          console.log(`Recursion test ${index}: limited (${error.message})`);
+          const message = error?.message || error?.toString() || 'Unknown error';
+          console.log(`Recursion test ${index}: limited (${message})`);
         }
       });
     });
@@ -238,7 +242,8 @@ describe('PCRE Security and Robustness Tests', () => {
         expect(result[0].value).toBe('test');
       } catch (error) {
         // May fail on invalid UTF-8, but shouldn't crash
-        expect(error.message).not.toMatch(/crash|segmentation/i);
+        const message = error?.message || error?.toString() || 'Unknown error';
+        expect(message).not.toMatch(/crash|segmentation/i);
       }
     });
 
@@ -294,7 +299,8 @@ describe('PCRE Security and Robustness Tests', () => {
           console.log(`Deep pattern ${index}: compiled successfully`);
         } catch (error) {
           // Expected to fail on stack limits
-          expect(error.message).not.toMatch(/stack overflow|segmentation/i);
+          const message = error?.message || error?.toString() || 'Unknown error';
+          expect(message).not.toMatch(/stack overflow|segmentation/i);
           console.log(`Deep pattern ${index}: safely limited`);
         }
       });
@@ -311,8 +317,9 @@ describe('PCRE Security and Robustness Tests', () => {
         console.log('Massive pattern compiled successfully');
       } catch (error) {
         // Expected to fail on memory limits
-        expect(error.message).toMatch(/memory|limit|too large/i);
-        console.log(`Memory limit respected: ${error.message}`);
+        const message = error?.message || error?.toString() || 'Unknown error';
+        expect(message).toMatch(/memory|limit|too large/i);
+        console.log(`Memory limit respected: ${message}`);
       }
     });
   });

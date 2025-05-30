@@ -1,0 +1,3 @@
+[submodule "libpcre"]
+	path = libpcre
+	url = git@github.com:devlux76/libpcre.git

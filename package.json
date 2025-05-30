@@ -1,0 +1,42 @@
+{
+  "name": "libpcre-ts",
+  "version": "1.0.0",
+  "description": "WebAssembly build of libpcre with TypeScript bindings",
+  "main": "dist/libpcre.js",
+  "types": "dist/libpcre.d.ts",
+  "scripts": {
+    "build": "./scripts/build.sh",
+    "build:wasm": "mkdir -p build && cd build && emcmake cmake .. && emmake make -j$(nproc)",
+    "build:types": "node scripts/generate-types.js",
+    "clean": "rm -rf build dist",
+    "test": "node test/test.js",
+    "prepare": "npm run build"
+  },
+  "keywords": [
+    "pcre",
+    "regex",
+    "webassembly",
+    "wasm",
+    "typescript",
+    "pattern",
+    "matching"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/emscripten": "^1.39.7",
+    "typescript": "^5.0.0"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/libpcre-ts.git"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}

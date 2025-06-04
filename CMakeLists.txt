@@ -54,6 +54,10 @@ set(EMSCRIPTEN_LINK_FLAGS
     "-sSTACK_SIZE=1MB"
     "-sEXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\",\"getValue\",\"setValue\",\"UTF8ToString\",\"stringToUTF8\",\"allocate\",\"ALLOC_NORMAL\"]"
     "-sEXPORTED_FUNCTIONS=[\"_malloc\",\"_free\"]"
+    "-sEXPORT_NAME=createPCREModule"
+    "-sSINGLE_FILE=0"
+    "-sFORCE_FILESYSTEM=0"
+    "-sNO_EXIT_RUNTIME=1"
     "--bind"
 )
 

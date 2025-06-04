@@ -49,7 +49,6 @@ emcmake cmake .. \
 
 # Build the project
 echo "🔨 Building WebAssembly module..."
-# CMake is configured with proper Emscripten flags for Cloudflare Workers
 emmake make -j$(nproc 2>/dev/null || echo 4)
 
 cd "$ROOT_DIR"

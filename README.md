@@ -1,36 +1,3 @@
-# ⚠️ Cloudflare Worker Support & Dual Build Targets
-
-This package supports two distinct build targets:
-
-- **npm/browser/Node.js**: Standard ES module for browsers, Node.js, and most bundlers. Uses `libpcre-npm.js`/`libpcre-npm.wasm`.
-- **Cloudflare Workers**: Special build for Cloudflare's module worker model. Uses `libpcre-cf.js`/`libpcre-cf.wasm`.
-
-## How to Build for Cloudflare Workers
-
-1. **Install Emscripten and CMake** (see below).
-2. Run:
-
-   ```bash
-   bun run build:cf
-   # or
-   npm run build:cf
-   ```
-
-   This will generate `dist/libpcre-cf.js` and `dist/libpcre-cf.wasm`.
-
-3. **Use as a [Service Binding](https://developers.cloudflare.com/workers/platform/service-bindings/) or Module Worker** in your Cloudflare Worker project. You cannot use the npm package directly in a Worker—Cloudflare requires a specific WASM/JS format and import style.
-
-4. See Cloudflare's documentation for [module worker deployment](https://developers.cloudflare.com/workers/learning/migrating-to-module-workers/) and [WASM bindings](https://developers.cloudflare.com/workers/runtime-apis/wasm/).
-
-## Why Two Builds?
-
-- **npm/browser**: Supports browsers, Node.js, and web workers with maximum compatibility.
-- **Cloudflare**: Cloudflare Workers require `-sENVIRONMENT=web` and a specific WASM section. Any other environment flags will cause deployment to fail.
-
-**Do not use the npm build in Cloudflare Workers.**
-
----
-
 # @syntropiq/libpcre-ts
 
 **WebAssembly wrapper for the original PCRE (Perl Compatible Regular Expressions) library with TypeScript bindings.**

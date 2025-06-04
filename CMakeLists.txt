@@ -43,16 +43,8 @@ target_link_libraries(pcre-wasm
     pcre32
 )
 
-# Option to build for Cloudflare Workers
-option(TARGET_CLOUDFLARE "Build for Cloudflare Workers" OFF)
-
-if(TARGET_CLOUDFLARE)
-    set(EMSCRIPTEN_ENV "web")
-    set(OUTPUT_NAME "libpcre-cf")
-else()
-    set(EMSCRIPTEN_ENV "web,webview,worker,node")
-    set(OUTPUT_NAME "libpcre-npm")
-endif()
+set(EMSCRIPTEN_ENV "web,webview,worker,node")
+set(OUTPUT_NAME "libpcre-npm")
 
 set(EMSCRIPTEN_LINK_FLAGS
     "-sEXPORT_ES6=1"
@@ -69,6 +61,7 @@ set(EMSCRIPTEN_LINK_FLAGS
     "-sNO_EXIT_RUNTIME=1"
     "-sASSERTIONS=1"
     "-sNO_DISABLE_EXCEPTION_CATCHING"
+    "-sSINGLE_FILE=1"
     "--bind"
 )
 

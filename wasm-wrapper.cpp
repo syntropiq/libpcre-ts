@@ -301,7 +301,12 @@ EMSCRIPTEN_BINDINGS(libpcre) {
         .constructor<const std::string&>()
         .constructor<const std::string&, int>()
         .function("test", &PCRERegex::test)
-        .function("exec", &PCRERegex::exec)
+        .function("exec", optional_override([](PCRERegex& self, const std::string& subject) {
+            return self.exec(subject, 0);
+        }))
+        .function("exec", optional_override([](PCRERegex& self, const std::string& subject, int start_offset) {
+            return self.exec(subject, start_offset);
+        }))
         .function("getNamedGroups", &PCRERegex::getNamedGroups)
         .function("globalMatch", &PCRERegex::globalMatch)
         .function("replace", &PCRERegex::replace)

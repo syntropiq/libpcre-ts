@@ -13,18 +13,6 @@ if (!fs.existsSync(distDir)) {
     fs.mkdirSync(distDir, { recursive: true });
 }
 
-// Copy TypeScript definitions
-const typesSource = path.join(__dirname, '..', 'types.d.ts');
-const typesDest = path.join(distDir, 'libpcre.d.ts');
-
-if (fs.existsSync(typesSource)) {
-    fs.copyFileSync(typesSource, typesDest);
-    console.log('✅ TypeScript definitions copied to dist/');
-} else {
-    console.error('❌ types.d.ts not found');
-    process.exit(1);
-}
-
 // Compile and copy TypeScript wrapper
 const tsSource = path.join(__dirname, '..', 'src', 'index.ts');
 const jsDest = path.join(distDir, 'index.js');
@@ -42,11 +30,11 @@ if (fs.existsSync(tsSource)) {
             fs.copyFileSync(wasmSrc, wasmTempDest);
         }
         
-        // Use TypeScript compiler to compile the file directly
-        console.log('🔨 Compiling TypeScript wrapper...');
+        // Use TypeScript compiler to compile the file directly and generate type definitions
+        console.log('🔨 Compiling TypeScript wrapper and generating type definitions...');
         
-        // Use tsc with specific configuration for this single file
-        const tscCommand = `npx tsc "${tsSource}" --outDir "${distDir}" --target ES2020 --module ESNext --moduleResolution node --allowSyntheticDefaultImports --esModuleInterop --skipLibCheck --allowJs --noEmitOnError false`;
+        // Use tsc with specific configuration for this single file, generating declarations
+        const tscCommand = `npx tsc "${tsSource}" --outDir "${distDir}" --target ES2020 --module ESNext --moduleResolution node --allowSyntheticDefaultImports --esModuleInterop --skipLibCheck --allowJs --noEmitOnError false --declaration --declarationMap`;
         execSync(tscCommand, { cwd: path.join(__dirname, '..'), stdio: 'inherit' });
         
         // Clean up temporary file
@@ -54,7 +42,15 @@ if (fs.existsSync(tsSource)) {
             fs.unlinkSync(wasmTempDest);
         }
         
-        console.log('✅ TypeScript wrapper compiled to dist/');
+        // Rename the generated .d.ts file to libpcre.d.ts for consistency
+        const generatedDts = path.join(distDir, 'index.d.ts');
+        const finalDts = path.join(distDir, 'libpcre.d.ts');
+        if (fs.existsSync(generatedDts)) {
+            fs.renameSync(generatedDts, finalDts);
+            console.log('✅ TypeScript wrapper compiled and type definitions generated');
+        } else {
+            throw new Error('Type definitions were not generated');
+        }
     } catch (error) {
         console.warn('⚠️  TypeScript compilation failed, copying source file...');
         console.warn('Error:', error.message);

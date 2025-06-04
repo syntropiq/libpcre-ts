@@ -1,8 +1,5 @@
-# Build artifacts
+#Build files
 build/
-*.wasm
-*.js.mem
-
 # Node modules
 node_modules/
 
@@ -11,6 +8,7 @@ node_modules/
 .idea/
 *.swp
 *.swo
+bun.lock
 
 # OS files
 .DS_Store

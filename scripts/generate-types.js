@@ -38,7 +38,7 @@ if (fs.existsSync(jsSource)) {
 }
 
 // Check if WASM files exist (they should already be copied by build.sh)
-const wasmFiles = ['libpcre.js', 'libpcre.wasm'];
+const wasmFiles = ['libpcre-npm.js', 'libpcre-npm.wasm'];
 
 let wasmFilesFound = 0;
 wasmFiles.forEach(file => {

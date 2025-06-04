@@ -147,6 +147,10 @@ Works in all modern browsers that support WebAssembly. For older browsers, inclu
 
 Works in Node.js 12+ with WebAssembly support.
 
+## Platform Support
+
+**Cloudflare Workers are not supported at this time, feel free to submit a PR if you get it working.**
+
 ## Contributing
 
 This library wraps the original PCRE C library. For bug reports or feature requests, please open an issue on [GitHub](https://github.com/syntropiq/libpcre-ts).

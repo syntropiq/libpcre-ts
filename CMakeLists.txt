@@ -65,7 +65,6 @@ set(EMSCRIPTEN_LINK_FLAGS
     "-sEXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\",\"getValue\",\"setValue\",\"UTF8ToString\",\"stringToUTF8\",\"allocate\",\"ALLOC_NORMAL\"]"
     "-sEXPORTED_FUNCTIONS=[\"_malloc\",\"_free\"]"
     "-sEXPORT_NAME=Module"
-    "-sSINGLE_FILE=0"
     "-sFORCE_FILESYSTEM=0"
     "-sNO_EXIT_RUNTIME=1"
     "-sASSERTIONS=1"

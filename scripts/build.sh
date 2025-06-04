@@ -54,11 +54,10 @@ emmake make -j$(nproc 2>/dev/null || echo 4)
 cd "$ROOT_DIR"
 
 # Check if the build was successful
-if [ -f "build/libpcre-npm.js" ] && [ -f "build/libpcre-npm.wasm" ]; then
+if [ -f "build/libpcre-npm.js" ]; then
     echo "✅ WebAssembly build successful!"
     echo "📦 Generated files:"
-    echo "   - build/libpcre-npm.js"
-    echo "   - build/libpcre-npm.wasm"
+    echo "   - build/libpcre-npm.js (single file with embedded WASM)"
     
     # Create dist directory and copy distribution files
     echo "📝 Preparing distribution files..."
@@ -66,7 +65,6 @@ if [ -f "build/libpcre-npm.js" ] && [ -f "build/libpcre-npm.wasm" ]; then
     
     # Copy WASM artifacts
     cp build/libpcre-npm.js dist/
-    cp build/libpcre-npm.wasm dist/
     
     # Generate TypeScript definitions and copy JS wrapper
     node scripts/generate-types.js

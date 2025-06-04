@@ -14,7 +14,9 @@
     "test:continue": "vitest run",
     "test:watch": "vitest",
     "test:performance": "vitest run test/performance.test.js --reporter=verbose",
-    "test:legacy": "node test/test.js"
+    "test:legacy": "node test/test.js",
+    "test:worker": "wrangler dev test-worker.js",
+    "deploy:test": "wrangler deploy test-worker.js"
   },
   "keywords": [
     "pcre",
@@ -36,7 +38,8 @@
     "@types/emscripten": "latest",
     "@vitest/ui": "latest",
     "typescript": "latest",
-    "vitest": "latest"
+    "vitest": "latest",
+    "wrangler": "^4.19.1"
   },
   "files": [
     "dist/",

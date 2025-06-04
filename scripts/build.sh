@@ -49,12 +49,8 @@ emcmake cmake .. \
 
 # Build the project
 echo "🔨 Building WebAssembly module..."
-# Use Emscripten flags for Cloudflare Workers compatibility
-# -sEXPORT_ES6=1: output ES module
-# -sMODULARIZE=1: export as a function
-# -sENVIRONMENT=web,worker: disable Node.js detection
-emmake make -j$(nproc) \
-  CFLAGS="-sEXPORT_ES6=1 -sMODULARIZE=1 -sENVIRONMENT=web,worker"
+# CMake is configured with proper Emscripten flags for Cloudflare Workers
+emmake make -j$(nproc 2>/dev/null || echo 4)
 
 cd "$ROOT_DIR"
 

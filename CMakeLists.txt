@@ -43,11 +43,11 @@ target_link_libraries(pcre-wasm
     pcre32
 )
 
-# Set up Emscripten-specific options
+# Set up Emscripten-specific options for proper ES module output
 set(EMSCRIPTEN_LINK_FLAGS
     "-sEXPORT_ES6=1"
     "-sMODULARIZE=1"
-    "-sENVIRONMENT=web,webview,worker,node"
+    "-sENVIRONMENT=web,webview,worker"
     "-sALLOW_MEMORY_GROWTH=1"
     "-sINITIAL_MEMORY=16MB"
     "-sMAXIMUM_MEMORY=2GB"

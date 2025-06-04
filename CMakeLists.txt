@@ -50,7 +50,7 @@ if(TARGET_CLOUDFLARE)
     set(EMSCRIPTEN_ENV "web")
     set(OUTPUT_NAME "libpcre-cf")
 else()
-    set(EMSCRIPTEN_ENV "web,webview,worker")
+    set(EMSCRIPTEN_ENV "web,webview,worker,node")
     set(OUTPUT_NAME "libpcre-npm")
 endif()
 
@@ -64,10 +64,12 @@ set(EMSCRIPTEN_LINK_FLAGS
     "-sSTACK_SIZE=1MB"
     "-sEXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\",\"getValue\",\"setValue\",\"UTF8ToString\",\"stringToUTF8\",\"allocate\",\"ALLOC_NORMAL\"]"
     "-sEXPORTED_FUNCTIONS=[\"_malloc\",\"_free\"]"
-    "-sEXPORT_NAME=createPCREModule"
+    "-sEXPORT_NAME=Module"
     "-sSINGLE_FILE=0"
     "-sFORCE_FILESYSTEM=0"
     "-sNO_EXIT_RUNTIME=1"
+    "-sASSERTIONS=1"
+    "-sNO_DISABLE_EXCEPTION_CATCHING"
     "--bind"
 )
 

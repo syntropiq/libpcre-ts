@@ -1,6 +1,6 @@
-// JavaScript implementation for the PCRE convenience class
+// JavaScript implementation for the PCRE convenience class (Cloudflare Workers)
 
-import createPCREModule from './libpcre.js';
+import createPCREModule from './libpcre-cf.js';
 
 export class PCRE {
   constructor() {

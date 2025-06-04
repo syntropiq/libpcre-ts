@@ -1,6 +1,6 @@
 // JavaScript implementation for the PCRE convenience class
 
-import createPCREModule from './libpcre.js';
+import createPCREModule from './libpcre-npm.js';
 
 export class PCRE {
   constructor() {
@@ -13,7 +13,6 @@ export class PCRE {
    */
   async init() {
     const result = await createPCREModule();
-    console.log('[PCRE.init] createPCREModule() result:', result);
     this.module = result;
   }
   

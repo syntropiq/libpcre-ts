@@ -1,6 +1,5 @@
 # Build artifacts
 build/
-dist/
 *.wasm
 *.js.mem
 
@@ -16,7 +15,7 @@ node_modules/
 # OS files
 .DS_Store
 Thumbs.db
-
+*-lock.json
 # Logs
 *.log
 npm-debug.log*

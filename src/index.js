@@ -12,7 +12,9 @@ export class PCRE {
    * @returns Promise that resolves when the module is ready
    */
   async init() {
-    this.module = await createPCREModule();
+    const result = await createPCREModule();
+    console.log('[PCRE.init] createPCREModule() result:', result);
+    this.module = result;
   }
   
   /**

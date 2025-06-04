@@ -43,11 +43,21 @@ target_link_libraries(pcre-wasm
     pcre32
 )
 
-# Set up Emscripten-specific options for proper ES module output
+# Option to build for Cloudflare Workers
+option(TARGET_CLOUDFLARE "Build for Cloudflare Workers" OFF)
+
+if(TARGET_CLOUDFLARE)
+    set(EMSCRIPTEN_ENV "web")
+    set(OUTPUT_NAME "libpcre-cf")
+else()
+    set(EMSCRIPTEN_ENV "web,webview,worker")
+    set(OUTPUT_NAME "libpcre-npm")
+endif()
+
 set(EMSCRIPTEN_LINK_FLAGS
     "-sEXPORT_ES6=1"
     "-sMODULARIZE=1"
-    "-sENVIRONMENT=web,webview,worker"
+    "-sENVIRONMENT=${EMSCRIPTEN_ENV}"
     "-sALLOW_MEMORY_GROWTH=1"
     "-sINITIAL_MEMORY=16MB"
     "-sMAXIMUM_MEMORY=2GB"
@@ -63,7 +73,7 @@ set(EMSCRIPTEN_LINK_FLAGS
 
 # Set target properties for the WASM output
 set_target_properties(pcre-wasm PROPERTIES
-    OUTPUT_NAME "libpcre"
+    OUTPUT_NAME "${OUTPUT_NAME}"
     SUFFIX ".js"
 )
 

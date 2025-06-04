@@ -1,11 +1,12 @@
 name = "libpcre-ts-test"
 main = "test-worker.js"
 compatibility_date = "2023-12-01"
+compatibility_flags = ["nodejs_compat"]
 
 [build]
 command = ""
 
-# Ensure WASM files are included
+# Ensure WASM files are included and properly bundled
 [[rules]]
 type = "Data"
 globs = ["**/*.wasm"]

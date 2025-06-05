@@ -37,7 +37,7 @@ describe('Basic Pattern Compilation', () => {
 
   test('should reject invalid patterns', () => {
     try {
-      expect(() => pcre.compile('[')).toThrow();
+      expect(() => pcre.compile('[')).toThrow('PCRE compilation failed: missing terminating ] for character class at offset 1');
       // Note: (?P<>invalid) is valid in original libpcre but invalid in libpcre2
       // Since we're using original libpcre, we don't expect this to throw
       // expect(() => pcre.compile('(?P<>invalid)')).toThrow();

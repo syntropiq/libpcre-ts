@@ -1,0 +1,13 @@
+version: 2
+updates:
+  # For JS/TS dependencies
+  - package-ecosystem: "npm"
+    directory: "/" # Location of package.json
+    schedule:
+      interval: "weekly"
+
+  # For GitHub Actions dependencies
+  - package-ecosystem: "github-actions"
+    directory: "/" # Location of workflow files
+    schedule:
+      interval: "weekly"

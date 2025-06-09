@@ -14,7 +14,9 @@
     "test:continue": "vitest run",
     "test:watch": "vitest",
     "test:performance": "vitest run test/performance.test.js --reporter=verbose",
-    "test:legacy": "node test/test.js"
+    "test:legacy": "node test/test.js",
+    "init:submodules": "./scripts/init-submodules.sh",
+    "preflight": "./scripts/preflight.sh"
   },
   "keywords": [
     "pcre",

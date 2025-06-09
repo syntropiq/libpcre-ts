@@ -27,6 +27,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$SCRIPT_DIR/.."
 cd "$ROOT_DIR"
 
+# Initialize submodules before anything else
+"$ROOT_DIR/scripts/init-submodules.sh"
+
 echo "📁 Creating build directory..."
 mkdir -p build
 cd build

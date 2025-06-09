@@ -5,8 +5,8 @@ This TODO list breaks down the plan into small, explicit steps. Each step should
 ---
 
 ## 1. Submodule Initialization and WASM Build Verification
-- [ ] **Initialize Submodules:**
-    - [ ] Create `scripts/init-submodules.sh` with the following content:
+- [x] **Initialize Submodules:**
+    - [x] Create `scripts/init-submodules.sh` with the following content:
       ```bash
       #!/bin/bash
       set -e
@@ -20,23 +20,26 @@ This TODO list breaks down the plan into small, explicit steps. Each step should
       
       echo "✅ Submodules successfully initialized."
       ```
-    - [ ] Make the script executable: `chmod +x scripts/init-submodules.sh`.
-    - [ ] Add an `init:submodules` script to `package.json`: `"init:submodules": "./scripts/init-submodules.sh"`.
-- [ ] **Integrate Submodule Init into Build & Verify WASM Output:**
-    - [ ] Modify `scripts/build.sh` to call `./scripts/init-submodules.sh` at the very beginning.
-    - [ ] Temporarily modify `scripts/build.sh` to output `libpcre-npm.js` to a known temporary location (e.g., `build/output_test/libpcre-npm.js`) and then `exit 0` immediately after the `emmake make` step.
-    - [ ] Run the modified `build.sh`.
-    - [ ] **Manually inspect `build/output_test/libpcre-npm.js`**: Confirm it's an ES6 module (look for `export default function createPCREModule` or similar). This step is crucial for understanding how it needs to be imported.
-    - [ ] Revert the temporary modifications to `scripts/build.sh` after verification.
+    - [x] Make the script executable: `chmod +x scripts/init-submodules.sh`.
+    - [x] Add an `init:submodules` script to `package.json`: `"init:submodules": "./scripts/init-submodules.sh"`.
+- [x] **Integrate Submodule Init into Build & Verify WASM Output:**
+    - [x] Modify `scripts/build.sh` to call `./scripts/init-submodules.sh` at the very beginning.
+    - [x] Preflight: check/install build tools (git, cmake, emcc) before build.
+    - [x] Add a `preflight` script to `package.json`.
+    - [x] Test preflight script to verify it works.
+    - [x] Temporarily modify `scripts/build.sh` to output `libpcre-npm.js` to a known temporary location (e.g., `build/output_test/libpcre-npm.js`) and then `exit 0` immediately after the `emmake make` step.
+    - [x] Run the modified `build.sh`.
+    - [x] **Manually inspect `build/output_test/libpcre-npm.js`**: Confirm it's an ES6 module (look for `export default function createPCREModule` or similar). This step is crucial for understanding how it needs to be imported.
+    - [x] Revert the temporary modifications to `scripts/build.sh` after verification (if needed).
 
 ## 2. Prepare TypeScript Configs for Dual Output
-- [ ] **Create Base TypeScript Config:**
-    - [ ] Create `tsconfig.base.json` by copying the `compilerOptions` from the current `tsconfig.json`.
-    - [ ] In `tsconfig.base.json`, ensure `declaration` is `true` and set `declarationDir` to `../dist/types` (adjust path based on `rootDir`). Consider if `scripts/generate-types.js` is still needed or if `tsc` will handle all type declarations. For now, assume `tsc` handles it.
-    - [ ] `include` and `exclude` paths in `tsconfig.base.json` should be appropriate for `src`.
-- [ ] **Create ESM TypeScript Config:**
-    - [ ] Create `tsconfig.esm.json` that extends `./tsconfig.base.json`.
-    - [ ] Override `compilerOptions` with:
+- [x] **Create Base TypeScript Config:**
+    - [x] Create `tsconfig.base.json` by copying the `compilerOptions` from the current `tsconfig.json`.
+    - [x] In `tsconfig.base.json`, ensure `declaration` is `true` and set `declarationDir` to `../dist/types` (adjust path based on `rootDir`). Consider if `scripts/generate-types.js` is still needed or if `tsc` will handle all type declarations. For now, assume `tsc` handles it.
+    - [x] `include` and `exclude` paths in `tsconfig.base.json` should be appropriate for `src`.
+- [x] **Create ESM TypeScript Config:**
+    - [x] Create `tsconfig.esm.json` that extends `./tsconfig.base.json`.
+    - [x] Override `compilerOptions` with:
       ```json
       {
         "module": "ESNext",
@@ -44,10 +47,10 @@ This TODO list breaks down the plan into small, explicit steps. Each step should
         "rootDir": "./src" 
       }
       ```
-    - [ ] Add `"include": ["src/**/*"]` and appropriate `exclude`.
-- [ ] **Create CJS TypeScript Config:**
-    - [ ] Create `tsconfig.cjs.json` that extends `./tsconfig.base.json`.
-    - [ ] Override `compilerOptions` with:
+    - [x] Add `"include": ["src/**/*"]` and appropriate `exclude`.
+- [x] **Create CJS TypeScript Config:**
+    - [x] Create `tsconfig.cjs.json` that extends `./tsconfig.base.json`.
+    - [x] Override `compilerOptions` with:
       ```json
       {
         "module": "CommonJS",
@@ -55,17 +58,17 @@ This TODO list breaks down the plan into small, explicit steps. Each step should
         "rootDir": "./src"
       }
       ```
-    - [ ] Add `"include": ["src/**/*"]` and appropriate `exclude`.
-- [ ] **Update Main `tsconfig.json` (Optional but Recommended):**
-    - [ ] Modify the existing `tsconfig.json` to extend `./tsconfig.esm.json` or serve as a base for editor tooling if needed, or remove if build-specific configs are sufficient. For now, assume it can be simplified or removed if `build:esm` and `build:cjs` are used directly.
+    - [x] Add `"include": ["src/**/*"]` and appropriate `exclude`.
+- [x] **Update Main `tsconfig.json` (Optional but Recommended):**
+    - [x] Modify the existing `tsconfig.json` to extend `./tsconfig.esm.json` or serve as a base for editor tooling if needed, or remove if build-specific configs are sufficient. For now, assume it can be simplified or removed if `build:esm` and `build:cjs` are used directly.
 
 ## 3. Update Build System & Create CJS Import Fix
-- [ ] **Modify `scripts/build.sh` for Dual Output:**
-    - [ ] After the `emmake make` step (which creates `build/libpcre-npm.js`), copy `build/libpcre-npm.js` to both `dist/esm/` and `dist/cjs/`.
-    - [ ] Add commands to run `tsc -p tsconfig.esm.json` and `tsc -p tsconfig.cjs.json`.
+- [x] **Modify `scripts/build.sh` for Dual Output:**
+    - [x] After the `emmake make` step (which creates `build/libpcre-npm.js`), copy `build/libpcre-npm.js` to both `dist/esm/` and `dist/cjs/`.
+    - [x] Add commands to run `tsc -p tsconfig.esm.json` and `tsc -p tsconfig.cjs.json`.
     - [ ] Call `node scripts/fix-cjs-imports.js` after the CJS compilation.
     - [ ] If `scripts/generate-types.js` is no longer the primary source for types (because `tsc` is handling it via `declaration: true`), remove its call from `build.sh` or adapt it. For now, assume `tsc` handles declarations.
-- [ ] **Add Build Scripts to `package.json`:**
+- [x] **Add Build Scripts to `package.json`:**
   ```json
   "scripts": {
     // ... existing scripts ...
@@ -78,80 +81,14 @@ This TODO list breaks down the plan into small, explicit steps. Each step should
     // ...
   },
   ```
-- [ ] **Create `scripts/fix-cjs-imports.js`:**
-    - [ ] This script will modify the `dist/cjs/index.js` (and any other CJS output files that import `libpcre-npm.js`).
-    - [ ] **Goal:** Transform `const x = require('./libpcre-npm.js')` (or similar `tsc` output) into a mechanism that uses dynamic `import()`.
-    - [ ] **Strategy:**
-        1. Read `dist/cjs/index.js`.
-        2. Use string replacement or a more robust AST manipulation library (e.g., `recast`, `jscodeshift` if you want to add them as dev dependencies) to find `require("./libpcre-npm.js")`.
-        3. Replace it with a structure that uses dynamic import. For example, if your `src/index.ts` is:
-           ```typescript
-           import createPCREModule from './libpcre-npm.js';
-           // ... uses createPCREModule
-           export class PCRE { /* ... */ }
-           ```
-           The `tsc` CJS output might be:
-           ```javascript
-           "use strict";
-           Object.defineProperty(exports, "__esModule", { value: true });
-           exports.PCRE = void 0;
-           const libpcre_npm_js_1 = require("./libpcre-npm.js"); // This is the problem line
-           class PCRE { /* ... uses libpcre_npm_js_1.default ... */ }
-           exports.PCRE = PCRE;
-           ```
-           The `fix-cjs-imports.js` needs to make the module effectively async or provide a top-level async initialization. A simple approach might be to wrap the module's core logic or exports in a way that they are only available after the dynamic import resolves.
-           A more direct, but potentially breaking change for CJS consumers, is to make the main CJS export a function that returns a promise.
-           **Placeholder for `fix-cjs-imports.js` content (needs careful implementation):**
-           ```javascript
-           // scripts/fix-cjs-imports.js
-           const fs = require('fs');
-           const path = require('path');
-           
-           const cjsIndexPath = path.join(__dirname, '../dist/cjs/index.js');
-           let content = fs.readFileSync(cjsIndexPath, 'utf8');
-           
-           // This is a SIMPLISTIC regex, likely needs to be much more robust
-           // It aims to replace the require statement for libpcre-npm.js
-           // and adjust how createPCREModule (or its tsc-generated equivalent) is used.
-           // THIS WILL LIKELY NEED SIGNIFICANT REFINEMENT.
-           content = content.replace(
-             /const\s+(\w+)\s*=\s*require\(\"\.\/libpcre-npm\.js\"\);/g,
-             'const $1 = { default: () => import(\\'./libpcre-npm.js\\').then(m => m.default) };'
-           );
-           // Further transformations might be needed depending on how createPCREModule is used.
-           // For example, if it's called immediately:
-           // (async () => {
-           //   const resolvedModule = await $1.default();
-           //   // ... rest of the module logic that depends on it
-           // })();
-           
-           fs.writeFileSync(cjsIndexPath, content);
-           console.log('✅ CJS imports fixed for libpcre-npm.js (tentatively).');
-           ```
-           **Note:** This placeholder is very basic and likely insufficient for a complex scenario. A proper AST transformation is safer.
-
-
-## 3. Update Build System
-- [ ] Modify `scripts/build.sh` to:
-  - [ ] Initialize submodules first
-  - [ ] Build the WebAssembly module as before
-  - [ ] Copy the WebAssembly output to both `dist/cjs/` and `dist/esm/`
-  - [ ] Use TypeScript to compile ESM and CJS versions
-  - [ ] Properly handle any import paths in the output files
-  - [ ] Run the type generation script once
-
-- [ ] Add the following scripts to `package.json`:
-  ```json
-  "build:esm": "tsc --project tsconfig.esm.json",
-  "build:cjs": "tsc --project tsconfig.cjs.json && node scripts/fix-cjs-imports.js",
-  "build:types": "node scripts/generate-types.js",
-  "init:submodules": "./scripts/init-submodules.sh"
-  ```
-
-- [ ] Create `scripts/fix-cjs-imports.js` to ensure CJS output has proper imports:
-  ```javascript
-  // This script fixes import paths in CJS output to use require() instead of import
-  ```
+- [x] **Setup Vite and bundling so we don't try to regex our way through**
+    - [x] Vite is now used for bundling ESM/CJS outputs. The WASM JS file (`libpcre-npm.js`) must be made available to Vite (e.g., by copying to `src/` before build).
+    - [ ] Fix the WASM import path for Vite (copy or symlink `libpcre-npm.js` to `src/` before the Vite build step).
+    - [ ] Remove or update `scripts/generate-types.js` if it is no longer needed.
+- [ ] **Update type definitions handling:**
+    - [x] Type definitions are now generated by TypeScript in `dist/types/`.
+    - [ ] Remove the manual type generation script if not needed, or replace with a post-build copy step if needed for legacy consumers.
+- [ ] **Document the changes and usage in the README.**
 
 ## 4. Setup Output Directory Structure
 - [ ] Update `build.sh` to create the following structure:

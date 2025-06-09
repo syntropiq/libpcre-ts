@@ -6,22 +6,6 @@ set -e
 
 echo "🏗️  Building libpcre-ts WebAssembly module..."
 
-# Check if emsdk is available
-if ! command -v emcc &> /dev/null; then
-    echo "❌ Emscripten not found. Please install and activate emsdk:"
-    echo "   git clone https://github.com/emscripten-core/emsdk.git"
-    echo "   cd emsdk && ./emsdk install latest && ./emsdk activate latest"
-    echo "   source ./emsdk_env.sh"
-    exit 1
-fi
-
-# Check if CMake is available
-if ! command -v cmake &> /dev/null; then
-    echo "❌ CMake not found. Please install CMake 3.20+"
-    exit 1
-fi
-
-
 # Always run from project root, create build directory in root
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$SCRIPT_DIR/.."
@@ -33,6 +17,29 @@ cd "$ROOT_DIR"
 echo "📁 Creating build directory..."
 mkdir -p build
 cd build
+
+# Ensure output_test directory exists for artifact copy
+mkdir -p output_test
+
+# Check if emsdk is available
+if ! command -v emcc &> /dev/null; then
+    echo "❌ Emscripten not found. Running preflight to install dependencies..."
+    "$ROOT_DIR/scripts/preflight.sh"
+    if ! command -v emcc &> /dev/null; then
+        echo "❌ Emscripten still not found after preflight. Aborting."
+        exit 1
+    fi
+fi
+
+# Check if CMake is available
+if ! command -v cmake &> /dev/null; then
+    echo "❌ CMake not found. Running preflight to install dependencies..."
+    "$ROOT_DIR/scripts/preflight.sh"
+    if ! command -v cmake &> /dev/null; then
+        echo "❌ CMake still not found after preflight. Aborting."
+        exit 1
+    fi
+fi
 
 # Configure with CMake
 echo "⚙️  Configuring with CMake..."
@@ -55,6 +62,24 @@ echo "🔨 Building WebAssembly module..."
 emmake make -j$(nproc 2>/dev/null || echo 4)
 
 cd "$ROOT_DIR"
+
+# Copy WASM output to both ESM and CJS dist directories
+mkdir -p dist/esm dist/cjs
+cp build/libpcre-npm.js dist/esm/
+cp build/libpcre-npm.js dist/cjs/
+
+# Make WASM JS available to Vite (copy to src/ before Vite build)
+cp build/libpcre-npm.js src/libpcre-npm.js
+
+# Build ESM and CJS TypeScript outputs
+npx tsc -p tsconfig.esm.json
+npx tsc -p tsconfig.cjs.json
+
+# Run Vite for production bundling (tree-shaking, minification, etc.)
+npx vite build
+
+# Clean up the copied WASM JS from src/ after Vite build
+rm -f src/libpcre-npm.js
 
 # Check if the build was successful
 if [ -f "build/libpcre-npm.js" ]; then

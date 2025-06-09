@@ -6,6 +6,8 @@
   "main": "dist/index.js",
   "types": "dist/libpcre.d.ts",
   "scripts": {
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
     "build": "./scripts/build.sh",
     "build:wasm": "mkdir -p build && cd build && emcmake cmake .. && emmake make -j$(nproc)",
     "build:types": "node scripts/generate-types.js",
@@ -16,7 +18,8 @@
     "test:performance": "vitest run test/performance.test.js --reporter=verbose",
     "test:legacy": "node test/test.js",
     "init:submodules": "./scripts/init-submodules.sh",
-    "preflight": "./scripts/preflight.sh"
+    "preflight": "./scripts/preflight.sh",
+    "build:vite": "vite build"
   },
   "keywords": [
     "pcre",
@@ -38,6 +41,7 @@
     "@types/emscripten": "latest",
     "@vitest/ui": "latest",
     "typescript": "latest",
+    "vite": "^6.3.5",
     "vitest": "latest"
   },
   "files": [

@@ -75,6 +75,9 @@ cp build/libpcre-npm.js src/libpcre-npm.js
 npx tsc -p tsconfig.esm.json
 npx tsc -p tsconfig.cjs.json
 
+echo "📦 Creating CJS package.json..."
+echo '{"type": "commonjs"}' > dist/cjs/package.json
+
 # Run Vite for production bundling (tree-shaking, minification, etc.)
 npx vite build
 

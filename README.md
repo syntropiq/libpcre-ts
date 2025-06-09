@@ -20,6 +20,23 @@ Perfect for porting legacy regex patterns or when you need maximum pattern compa
 npm install @syntropiq/libpcre-ts
 ```
 
+## Build & Module Support (ESM & CJS)
+
+- **Dual ESM/CJS support:** This package now ships with both modern ESM and legacy CommonJS builds, fully tree-shakable and optimized for all environments.
+- **Automatic WASM handling:** The WebAssembly and its JS loader are bundled for both module formats. No manual copying or import hacks needed.
+- **TypeScript types:** Complete type definitions are generated and published for both ESM and CJS consumers.
+- **Modern build system:** Uses Vite for bundling/optimization and TypeScript for type safety. All build, setup, and submodule steps are automated via scripts.
+
+**Usage:**
+- In ESM (Node.js or browser):
+  ```js
+  import { PCRE } from '@syntropiq/libpcre-ts';
+  ```
+- In CommonJS (Node.js):
+  ```js
+  const { PCRE } = require('@syntropiq/libpcre-ts');
+  ```
+
 ## Quick Start
 
 ```typescript
@@ -299,7 +316,12 @@ if (!result.success) {
 
 ## Contributing
 
-Found a bug or want to contribute? Check out our [GitHub repository](https://github.com/syntropiq/libpcre-ts).
+- All build and setup is automated via scripts in the `scripts/` directory.
+- See `PLAN.md` and `TODO.md` for current development status and workflow.
+- To build and test locally, just run:
+  ```bash
+  npm run build && npm test
+  ```
 
 ## License
 
@@ -460,34 +482,25 @@ if (!result.success) {
 ### Requirements
 
 - Emscripten SDK 3.1.6+
-- CMake 3.10+
+- CMake 3.16+
 - Git
 
-### Custom Build Options
+### Automated Build & Setup
 
-You can customize the build by modifying the CMake options in `CMakeLists.txt`:
-
-```cmake
-# Enable 16-bit and 32-bit PCRE variants
-set(PCRE_BUILD_PCRE16 ON)
-set(PCRE_BUILD_PCRE32 ON)
-
-# Enable JIT compilation (may not work in all environments)
-set(PCRE_SUPPORT_JIT ON)
-```
-
-### Development Build
-
-For development with debug symbols:
+All setup, submodule, and build steps are automated:
 
 ```bash
-emcc -g -I build/libpcre -I libpcre \
-  build/libpcre/libpcre.a build/libpcre/libpcreposix.a \
-  wasm-wrapper.cpp -o build/libpcre.js \
-  --bind -s MODULARIZE=1 -s EXPORT_NAME=PCRE \
-  -s ENVIRONMENT=web,node -s ALLOW_MEMORY_GROWTH=1 \
-  -s ASSERTIONS=1
+npm run build
 ```
+
+This will:
+- Check/install required tools (git, cmake, emcc)
+- Initialize submodules
+- Build the WASM binary and loader
+- Build ESM and CJS outputs (with Vite and TypeScript)
+- Generate and copy type definitions
+
+**Manual build steps are no longer required.**
 
 ## License
 

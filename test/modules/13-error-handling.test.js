@@ -18,7 +18,7 @@ describe('Error Handling and Edge Cases', () => {
     try {
       expect(() => {
         pcre.compile('[invalid');
-      }).toThrow();
+      }).toThrow('PCRE compilation failed: missing terminating ] for character class at offset 8');
     } catch (error) {
       console.error('FATAL ERROR in invalid regex test:', error);
       throw error;
@@ -42,10 +42,10 @@ describe('Error Handling and Edge Cases', () => {
       const regex = pcre.compile('test');
       expect(() => {
         regex.exec(null);
-      }).toThrow();
+      }).toThrow('Cannot pass non-string to std::string');
       expect(() => {
         regex.exec(undefined);
-      }).toThrow();
+      }).toThrow('Cannot pass non-string to std::string');
     } catch (error) {
       console.error('FATAL ERROR in null/undefined inputs test:', error);
       throw error;

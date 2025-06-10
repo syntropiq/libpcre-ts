@@ -25,10 +25,10 @@ export default defineConfig({
         },
         chunkFileNames: (chunkInfo) => {
           // Use .cjs for CJS chunks, .js for ESM
-          if (chunkInfo.name && chunkInfo.name.endsWith('.cjs')) {
+          if (chunkInfo.format === 'cjs') {
             return 'cjs/[name].cjs';
           }
-          if (chunkInfo.name && chunkInfo.name.endsWith('.js')) {
+          if (chunkInfo.format === 'es') {
             return 'esm/[name].js';
           }
           return '[name].js';

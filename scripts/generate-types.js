@@ -15,7 +15,7 @@ if (!fs.existsSync(distDir)) {
 
 // Compile and copy TypeScript wrapper
 const tsSource = path.join(__dirname, '..', 'src', 'index.ts');
-const jsDest = path.join(distDir, 'index.js');
+const jsDest = path.join(distDir, 'index.cjs'); // Use .cjs for CJS output
 
 if (fs.existsSync(tsSource)) {
     // First, copy the WASM file to src directory temporarily for compilation

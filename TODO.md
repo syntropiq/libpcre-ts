@@ -1,148 +1,19 @@
-# TODO: Dual ESM/CJS Build & Submodule Support for @syntropiq/libpcre-ts
+# TODO for ESM/CJS Build Automation
 
-This TODO list breaks down the plan into small, explicit steps. Each step should be implemented and tested before moving to the next. Steps are ordered for minimal disruption and clarity.
+- [ ] Refactor any source code that uses import.meta.url or __dirname to use a runtime helper for environment detection.
+- [ ] Ensure Vite config outputs .cjs for CJS and .js for ESM (done).
+- [ ] Remove or ignore dist/cjs/index.js for CJS consumers; use only index.cjs.
+- [ ] Update scripts (e.g., generate-types.js) to reference index.cjs for CJS, not index.js.
+- [ ] Ensure package.json points to the correct entry points for all environments.
+- [ ] Only add post-build scripts if a true edge case is found.
+- [ ] Ensure web build avoids Node.js built-ins
+- [ ] Test all build outputs (Node.js, VSCode desktop/web, browser)
+- [ ] Document process in README.md and PLAN.md
 
 ---
 
-## 1. Submodule Initialization and WASM Build Verification
-- [x] **Initialize Submodules:**
-    - [x] Create `scripts/init-submodules.sh` with the following content:
-      ```bash
-      #!/bin/bash
-      set -e
-      echo "ℹ️ Initializing libpcre submodule..."
-      git submodule update --init --recursive
-      
-      if [ ! -f "libpcre/CMakeLists.txt" ] || [ ! -d "libpcre/src" ]; then # Check for a key file and directory
-        echo "❌ ERROR: libpcre submodule not properly initialized or key files are missing. Please check your git repository and submodule status."
-        exit 1
-      fi
-      
-      echo "✅ Submodules successfully initialized."
-      ```
-    - [x] Make the script executable: `chmod +x scripts/init-submodules.sh`.
-    - [x] Add an `init:submodules` script to `package.json`: `"init:submodules": "./scripts/init-submodules.sh"`.
-- [x] **Integrate Submodule Init into Build & Verify WASM Output:**
-    - [x] Modify `scripts/build.sh` to call `./scripts/init-submodules.sh` at the very beginning.
-    - [x] Preflight: check/install build tools (git, cmake, emcc) before build.
-    - [x] Add a `preflight` script to `package.json`.
-    - [x] Test preflight script to verify it works.
-    - [x] Temporarily modify `scripts/build.sh` to output `libpcre-npm.js` to a known temporary location (e.g., `build/output_test/libpcre-npm.js`) and then `exit 0` immediately after the `emmake make` step.
-    - [x] Run the modified `build.sh`.
-    - [x] **Manually inspect `build/output_test/libpcre-npm.js`**: Confirm it's an ES6 module (look for `export default function createPCREModule` or similar). This step is crucial for understanding how it needs to be imported.
-    - [x] Revert the temporary modifications to `scripts/build.sh` after verification (if needed).
-
-## 2. Prepare TypeScript Configs for Dual Output
-- [x] **Create Base TypeScript Config:**
-    - [x] Create `tsconfig.base.json` by copying the `compilerOptions` from the current `tsconfig.json`.
-    - [x] In `tsconfig.base.json`, ensure `declaration` is `true` and set `declarationDir` to `../dist/types` (adjust path based on `rootDir`). Consider if `scripts/generate-types.js` is still needed or if `tsc` will handle all type declarations. For now, assume `tsc` handles it.
-    - [x] `include` and `exclude` paths in `tsconfig.base.json` should be appropriate for `src`.
-- [x] **Create ESM TypeScript Config:**
-    - [x] Create `tsconfig.esm.json` that extends `./tsconfig.base.json`.
-    - [x] Override `compilerOptions` with:
-      ```json
-      {
-        "module": "ESNext",
-        "outDir": "./dist/esm",
-        "rootDir": "./src" 
-      }
-      ```
-    - [x] Add `"include": ["src/**/*"]` and appropriate `exclude`.
-- [x] **Create CJS TypeScript Config:**
-    - [x] Create `tsconfig.cjs.json` that extends `./tsconfig.base.json`.
-    - [x] Override `compilerOptions` with:
-      ```json
-      {
-        "module": "CommonJS",
-        "outDir": "./dist/cjs",
-        "rootDir": "./src"
-      }
-      ```
-    - [x] Add `"include": ["src/**/*"]` and appropriate `exclude`.
-- [x] **Update Main `tsconfig.json` (Optional but Recommended):**
-    - [x] Modify the existing `tsconfig.json` to extend `./tsconfig.esm.json` or serve as a base for editor tooling if needed, or remove if build-specific configs are sufficient. For now, assume it can be simplified or removed if `build:esm` and `build:cjs` are used directly.
-
-## 3. Update Build System & Create CJS Import Fix
-- [x] **Modify `scripts/build.sh` for Dual Output:**
-    - [x] After the `emmake make` step (which creates `build/libpcre-npm.js`), copy `build/libpcre-npm.js` to both `dist/esm/` and `dist/cjs/`.
-    - [x] Add commands to run `tsc -p tsconfig.esm.json` and `tsc -p tsconfig.cjs.json`.
-    - [ ] Call `node scripts/fix-cjs-imports.js` after the CJS compilation.
-    - [ ] If `scripts/generate-types.js` is no longer the primary source for types (because `tsc` is handling it via `declaration: true`), remove its call from `build.sh` or adapt it. For now, assume `tsc` handles declarations.
-- [x] **Add Build Scripts to `package.json`:**
-  ```json
-  "scripts": {
-    // ... existing scripts ...
-    "init:submodules": "./scripts/init-submodules.sh",
-    "build:wasm": "echo 'WASM build is part of the main build script now'", // Or keep original if it's run separately
-    "build:esm": "tsc -p tsconfig.esm.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json && node scripts/fix-cjs-imports.js",
-    "build:types": "echo 'Types are generated by tsc during esm/cjs build' ", // If tsc handles it
-    "build": "./scripts/build.sh", // Ensure this orchestrates everything
-    // ...
-  },
-  ```
-- [x] **Setup Vite and bundling so we don't try to regex our way through**
-    - [x] Vite is now used for bundling ESM/CJS outputs. The WASM JS file (`libpcre-npm.js`) must be made available to Vite (e.g., by copying to `src/` before build).
-    - [ ] Fix the WASM import path for Vite (copy or symlink `libpcre-npm.js` to `src/` before the Vite build step).
-    - [ ] Remove or update `scripts/generate-types.js` if it is no longer needed.
-- [ ] **Update type definitions handling:**
-    - [x] Type definitions are now generated by TypeScript in `dist/types/`.
-    - [ ] Remove the manual type generation script if not needed, or replace with a post-build copy step if needed for legacy consumers.
-- [ ] **Document the changes and usage in the README.**
-
-## 4. Setup Output Directory Structure
-- [ ] Update `build.sh` to create the following structure:
-  ```
-  dist/
-    cjs/ - CommonJS modules + WebAssembly
-      index.js
-      libpcre-npm.js
-    esm/ - ESM modules + WebAssembly
-      index.js
-      libpcre-npm.js
-    types/ - TypeScript definitions
-      libpcre.d.ts
-  ```
-- [ ] Update `.gitignore` to include all output directories.
-- [ ] Update `files` in `package.json` to include all output directories.
-
-## 5. Update package.json for Conditional Exports
-- [ ] Update the following fields in `package.json`:
-  ```json
-  "main": "./dist/cjs/index.js",
-  "module": "./dist/esm/index.js",
-  "types": "./dist/types/libpcre.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js",
-      "types": "./dist/types/libpcre.d.ts"
-    }
-  },
-  ```
-- [ ] Keep the `"type": "module"` field for proper ESM package identification.
-
-## 6. Update types generation
-- [ ] Modify `scripts/generate-types.js` to output types to `dist/types/` directory.
-- [ ] Ensure types are compatible with both ESM and CJS usage.
-
-## 7. Documentation
-- [ ] Add a section to the README about dual ESM/CJS support.
-- [ ] Document the submodule initialization process.
-- [ ] Provide examples for both ESM and CJS usage:
-  ```javascript
-  // ESM example
-  import { PCRE } from '@syntropiq/libpcre-ts';
-  
-  // CJS example
-  const { PCRE } = require('@syntropiq/libpcre-ts');
-  ```
-- [ ] Document the build process changes.
-
-## 8. Testing
-- [ ] Test the build process from a clean clone (with submodules).
-- [ ] Create simple test projects importing the package as both ESM and CJS.
-- [ ] Test VSCode integration specifically (addressing the original issue).
+## Background
+The previous submodule/WASM build issue is now resolved. The current focus is on ESM/CJS packaging and VSCode compatibility, which became apparent after the WASM build was automated. All steps below relate to the new packaging and compatibility requirements.
 
 ---
 

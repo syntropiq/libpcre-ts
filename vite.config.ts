@@ -14,21 +14,26 @@ export default defineConfig({
       external: [], // Add external dependencies here if needed
       output: {
         dir: 'dist',
-        entryFileNames: ({ format }) => {
-          if (format === 'es') return 'esm/index.js';
-          if (format === 'cjs') return 'cjs/index.js';
-          return 'index.js';
-        },
-        chunkFileNames: ({ format }) => {
-          if (format === 'es') return 'esm/[name].js';
-          if (format === 'cjs') return 'cjs/[name].js';
+        entryFileNames: (chunkInfo) => {
+          // Determine format, fallback to 'js' if not specified
+          const format = chunkInfo.format || (chunkInfo.moduleIds?.some(id => id.endsWith('.cjs')) ? 'cjs' : 'esm');
+          if (chunkInfo.isEntry && chunkInfo.name === 'index') {
+            return format === 'cjs' ? 'cjs/index.cjs' : 'esm/index.js';
+          }
+          // Default fallback
           return '[name].js';
         },
-        assetFileNames: ({ format }) => {
-          if (format === 'es') return 'esm/[name][extname]';
-          if (format === 'cjs') return 'cjs/[name][extname]';
-          return '[name][extname]';
+        chunkFileNames: (chunkInfo) => {
+          // Use .cjs for CJS chunks, .js for ESM
+          if (chunkInfo.format === 'cjs') {
+            return 'cjs/[name].cjs';
+          }
+          if (chunkInfo.format === 'es') {
+            return 'esm/[name].js';
+          }
+          return '[name].js';
         },
+        assetFileNames: '[name][extname]',
       },
     },
     emptyOutDir: false,

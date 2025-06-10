@@ -15,24 +15,12 @@ export default defineConfig({
       output: {
         dir: 'dist',
         entryFileNames: (chunkInfo) => {
-          // Vite passes a string for format, but fallback to .js if not cjs
-          // See https://rollupjs.org/configuration-options/#output-entryfilenames
-          // chunkInfo is not guaranteed to have format, so use build.lib.formats
-          if (chunkInfo.name === 'index' && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.endsWith('.ts')) {
-            // Main entry
-            if (chunkInfo.isEntry && chunkInfo.name === 'index') {
-              if (chunkInfo.moduleIds && chunkInfo.moduleIds.some(id => id.endsWith('.cjs'))) {
-                return 'cjs/index.cjs';
-              }
-              // fallback: use .cjs for cjs format
-              return 'cjs/index.cjs';
-            }
-          }
-          // fallback for ESM
+          // Determine format, fallback to 'js' if not specified
+          const format = chunkInfo.format || (chunkInfo.moduleIds?.some(id => id.endsWith('.cjs')) ? 'cjs' : 'esm');
           if (chunkInfo.isEntry && chunkInfo.name === 'index') {
-            return 'esm/index.js';
+            return format === 'cjs' ? 'cjs/index.cjs' : 'esm/index.js';
           }
-          // fallback
+          // Default fallback
           return '[name].js';
         },
         chunkFileNames: (chunkInfo) => {

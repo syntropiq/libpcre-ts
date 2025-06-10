@@ -14,21 +14,38 @@ export default defineConfig({
       external: [], // Add external dependencies here if needed
       output: {
         dir: 'dist',
-        entryFileNames: ({ format }) => {
-          if (format === 'es') return 'esm/index.js';
-          if (format === 'cjs') return 'cjs/index.js';
-          return 'index.js';
-        },
-        chunkFileNames: ({ format }) => {
-          if (format === 'es') return 'esm/[name].js';
-          if (format === 'cjs') return 'cjs/[name].js';
+        entryFileNames: (chunkInfo) => {
+          // Vite passes a string for format, but fallback to .js if not cjs
+          // See https://rollupjs.org/configuration-options/#output-entryfilenames
+          // chunkInfo is not guaranteed to have format, so use build.lib.formats
+          if (chunkInfo.name === 'index' && chunkInfo.facadeModuleId && chunkInfo.facadeModuleId.endsWith('.ts')) {
+            // Main entry
+            if (chunkInfo.isEntry && chunkInfo.name === 'index') {
+              if (chunkInfo.moduleIds && chunkInfo.moduleIds.some(id => id.endsWith('.cjs'))) {
+                return 'cjs/index.cjs';
+              }
+              // fallback: use .cjs for cjs format
+              return 'cjs/index.cjs';
+            }
+          }
+          // fallback for ESM
+          if (chunkInfo.isEntry && chunkInfo.name === 'index') {
+            return 'esm/index.js';
+          }
+          // fallback
           return '[name].js';
         },
-        assetFileNames: ({ format }) => {
-          if (format === 'es') return 'esm/[name][extname]';
-          if (format === 'cjs') return 'cjs/[name][extname]';
-          return '[name][extname]';
+        chunkFileNames: (chunkInfo) => {
+          // Use .cjs for CJS chunks, .js for ESM
+          if (chunkInfo.name && chunkInfo.name.endsWith('.cjs')) {
+            return 'cjs/[name].cjs';
+          }
+          if (chunkInfo.name && chunkInfo.name.endsWith('.js')) {
+            return 'esm/[name].js';
+          }
+          return '[name].js';
         },
+        assetFileNames: '[name][extname]',
       },
     },
     emptyOutDir: false,

@@ -20,6 +20,38 @@ Perfect for porting legacy regex patterns or when you need maximum pattern compa
 npm install @syntropiq/libpcre-ts
 ```
 
+## ESM & CJS Build Support
+
+- This package provides both ESM (`dist/esm/index.js`) and CJS (`dist/cjs/index.cjs`) outputs.
+- The correct entry point is automatically selected via the `exports` field in `package.json`.
+- TypeScript types are available at `dist/types/index.d.ts`.
+- The build system uses Vite and TypeScript for modern, standards-compliant output.
+
+### Usage
+
+**ESM (Node.js, browser, or modern bundlers):**
+```js
+import { PCRE } from '@syntropiq/libpcre-ts';
+```
+
+**CJS (Node.js):**
+```js
+const { PCRE } = require('@syntropiq/libpcre-ts');
+```
+
+### Building & Testing
+
+To build and test the package:
+```sh
+npm install
+npm run build
+npm test
+```
+
+All outputs and types are generated in the `dist/` directory. No post-processing or manual patching is required.
+
+---
+
 ## Build & Module Support (ESM & CJS)
 
 - **Dual ESM/CJS support:** This package now ships with both modern ESM and legacy CommonJS builds, fully tree-shakable and optimized for all environments.

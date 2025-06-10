@@ -1,5 +1,17 @@
 # PLAN: ESM/CJS Build Automation for VSCode Compatibility
 
+## Update: Bundler-First Approach
+
+After review, the best practice is to let the bundler (Vite/Rollup) handle all ESM/CJS differences, file extensions, and code transformation. Manual post-processing (e.g., swapping import.meta.url and __dirname) should be avoided unless absolutely necessary. If any code needs to distinguish between ESM and CJS, use runtime checks or a helper function in the source, not in the build output.
+
+**Action Items:**
+- Refactor any source code that directly uses import.meta.url or __dirname to use a runtime helper.
+- Ensure Vite config outputs .cjs for CJS and .js for ESM (already done).
+- Remove or ignore dist/cjs/index.js for CJS consumers; use only index.cjs.
+- Update scripts (e.g., generate-types.js) to reference index.cjs for CJS, not index.js.
+- Ensure package.json points to the correct entry points for all environments.
+- Only add post-build scripts if a true edge case is found.
+
 ## Background
 The previous issue involved ensuring the libpcre submodule and WASM build process were robust and automated. That work is now complete. However, as a result, we discovered that the ESM/CJS packaging and import handling were not fully compatible with VSCode (especially web), due to:
 - Incorrect file extensions for CJS output
@@ -27,6 +39,10 @@ Automate and future-proof the build process to support both ESM and CJS outputs,
 8. Document process in README.md and PLAN.md
 
 ---
+
+## Status Update (2025-06-10)
+- Patch version bump and documentation for ESM/CJS dual output completed.
+- See README.md for usage and build instructions.
 
 ## References
 - [VSCode ESM/CJS compatibility issue](https://github.com/microsoft/vscode/issues/130367#issuecomment-2768741248)

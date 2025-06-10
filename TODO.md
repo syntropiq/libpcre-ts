@@ -1,13 +1,11 @@
 # TODO for ESM/CJS Build Automation
 
-- [ ] Analyze current Vite and TypeScript build outputs for CJS/ESM
-- [ ] Update Vite/tsc configs for correct file extensions (.cjs/.js)
-- [ ] Ensure CJS builds use __dirname, ESM builds use import.meta.url
-- [ ] Write post-build Node.js script for:
-    - [ ] Renaming CJS files to .cjs
-    - [ ] Replacing import.meta.url with __dirname in .cjs files
-    - [ ] Patching package.json (browser field, entry points)
-- [ ] Update package.json exports for dual ESM/CJS/browser
+- [ ] Refactor any source code that uses import.meta.url or __dirname to use a runtime helper for environment detection.
+- [ ] Ensure Vite config outputs .cjs for CJS and .js for ESM (done).
+- [ ] Remove or ignore dist/cjs/index.js for CJS consumers; use only index.cjs.
+- [ ] Update scripts (e.g., generate-types.js) to reference index.cjs for CJS, not index.js.
+- [ ] Ensure package.json points to the correct entry points for all environments.
+- [ ] Only add post-build scripts if a true edge case is found.
 - [ ] Ensure web build avoids Node.js built-ins
 - [ ] Test all build outputs (Node.js, VSCode desktop/web, browser)
 - [ ] Document process in README.md and PLAN.md

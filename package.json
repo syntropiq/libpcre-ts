@@ -68,5 +68,5 @@
   "engines": {
     "node": ">=16.0.0"
   },
-  "browser": "dist/esm/index.js"
+  "browser": "./dist/esm/index.js"
 }

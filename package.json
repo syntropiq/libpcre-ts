@@ -18,7 +18,7 @@
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build": "./scripts/build.sh",
     "build:wasm": "mkdir -p build && cd build && emcmake cmake .. && emmake make -j$(nproc)",
-    "build:types": "node scripts/generate-types.js",
+    "build:types": "npm run build:esm -- -emitDeclarationOnly && npm run build:cjs -- -emitDeclarationOnly",
     "clean": "rm -rf build dist",
     "test": "vitest run --bail=1",
     "test:continue": "vitest run",

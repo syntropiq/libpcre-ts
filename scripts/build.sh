@@ -88,9 +88,6 @@ if [ -f "build/libpcre-npm.js" ]; then
     # Copy WASM artifacts
     cp build/libpcre-npm.js dist/
     
-    # Generate TypeScript definitions and copy JS wrapper
-    node scripts/generate-types.js
-    
     echo "🎉 Build complete!"
     echo ""
     echo "Next steps:"

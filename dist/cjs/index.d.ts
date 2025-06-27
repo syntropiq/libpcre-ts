@@ -1,4 +1,4 @@
-import createPCREModule from './libpcre-npm.js';
+import createPCREModule from './libpcre-npm';
 export interface PCREMatch {
     value: string;
     index: number;
@@ -118,4 +118,3 @@ export declare class PCRE {
     get constants(): PCREConstants;
 }
 export default createPCREModule;
-//# sourceMappingURL=index.d.ts.map

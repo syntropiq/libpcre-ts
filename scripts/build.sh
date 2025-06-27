@@ -41,8 +41,8 @@ if ! command -v cmake &> /dev/null; then
     fi
 fi
 
-# Configure with CMake
-echo "⚙️  Configuring with CMake..."
+# Configure with CMake (ESM)
+echo "⚙️  Configuring with CMake (ESM)..."
 emcmake cmake .. \
     -DCMAKE_BUILD_TYPE=Release \
     -DPCRE_BUILD_PCRE8=ON \
@@ -57,16 +57,31 @@ emcmake cmake .. \
     -DPCRE_SHOW_REPORT=OFF \
     -DBUILD_SHARED_LIBS=OFF
 
-# Build the project
-echo "🔨 Building WebAssembly module..."
+# Build the project (ESM)
+echo "🔨 Building WebAssembly module (ESM)..."
+emmake make -j$(nproc 2>/dev/null || echo 4)
+
+# Configure with CMake (CJS)
+echo "⚙️  Configuring with CMake (CJS)..."
+EXPORT_CJS=1 emcmake cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DPCRE_BUILD_PCRE8=ON \
+    -DPCRE_BUILD_PCRE16=ON \
+    -DPCRE_BUILD_PCRE32=ON \
+    -DPCRE_BUILD_PCRECPP=OFF \
+    -DPCRE_SUPPORT_UTF=ON \
+    -DPCRE_SUPPORT_UNICODE_PROPERTIES=ON \
+    -DPCRE_SUPPORT_JIT=OFF \
+    -DPCRE_BUILD_PCREGREP=OFF \
+    -DPCRE_BUILD_TESTS=OFF \
+    -DPCRE_SHOW_REPORT=OFF \
+    -DBUILD_SHARED_LIBS=OFF
+
+# Build the project (CJS)
+echo "🔨 Building WebAssembly module (CJS)..."
 emmake make -j$(nproc 2>/dev/null || echo 4)
 
 cd "$ROOT_DIR"
-
-# Copy WASM output to both ESM and CJS dist directories
-mkdir -p dist/esm dist/cjs
-cp build/libpcre-npm.js dist/esm/
-cp build/libpcre-npm.js dist/cjs/
 
 # Build ESM and CJS TypeScript outputs
 npm run build:esm
@@ -75,18 +90,16 @@ npm run build:cjs
 echo "📦 Creating CJS package.json..."
 echo '{"type": "commonjs"}' > dist/cjs/package.json
 
+# Copy WASM output to both ESM and CJS dist directories
+echo "📝 Preparing distribution files..."
+cp build/libpcre-npm.js dist/esm/libpcre-npm.js
+cp build/libpcre-npm.cjs dist/cjs/libpcre-npm.js
+
 # Check if the build was successful
-if [ -f "build/libpcre-npm.js" ]; then
+if [ -f "dist/cjs/libpcre-npm.js" ]; then
     echo "✅ WebAssembly build successful!"
     echo "📦 Generated files:"
-    echo "   - build/libpcre-npm.js (single file with embedded WASM)"
-    
-    # Create dist directory and copy distribution files
-    echo "📝 Preparing distribution files..."
-    mkdir -p dist
-    
-    # Copy WASM artifacts
-    cp build/libpcre-npm.js dist/
+    ls ./dist/ -R
     
     echo "🎉 Build complete!"
     echo ""

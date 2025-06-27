@@ -46,8 +46,14 @@ target_link_libraries(pcre-wasm
 set(EMSCRIPTEN_ENV "web,webview,worker,node")
 set(OUTPUT_NAME "libpcre-npm")
 
+if ($ENV{EXPORT_CJS})
+    set(EXPORT_ES6 0)
+else()
+    set(EXPORT_ES6 1)
+endif()
+
 set(EMSCRIPTEN_LINK_FLAGS
-    "-sEXPORT_ES6=1"
+    "-sEXPORT_ES6=${EXPORT_ES6}"
     "-sMODULARIZE=1"
     "-sENVIRONMENT=${EMSCRIPTEN_ENV}"
     "-sALLOW_MEMORY_GROWTH=1"
@@ -65,10 +71,16 @@ set(EMSCRIPTEN_LINK_FLAGS
     "--bind"
 )
 
+if ($ENV{EXPORT_CJS})
+    set(SUFFIX "cjs")
+else()
+    set(SUFFIX "js")
+endif()
+
 # Set target properties for the WASM output
 set_target_properties(pcre-wasm PROPERTIES
     OUTPUT_NAME "${OUTPUT_NAME}"
-    SUFFIX ".js"
+    SUFFIX ".${SUFFIX}"
 )
 
 # Add link options for Emscripten

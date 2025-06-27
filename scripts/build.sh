@@ -69,8 +69,8 @@ cp build/libpcre-npm.js dist/esm/
 cp build/libpcre-npm.js dist/cjs/
 
 # Build ESM and CJS TypeScript outputs
-npx tsc -p tsconfig.esm.json
-npx tsc -p tsconfig.cjs.json
+npm run build:esm
+npm run build:cjs
 
 echo "📦 Creating CJS package.json..."
 echo '{"type": "commonjs"}' > dist/cjs/package.json

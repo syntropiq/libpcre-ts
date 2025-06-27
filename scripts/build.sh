@@ -68,21 +68,12 @@ mkdir -p dist/esm dist/cjs
 cp build/libpcre-npm.js dist/esm/
 cp build/libpcre-npm.js dist/cjs/
 
-# Make WASM JS available to Vite (copy to src/ before Vite build)
-cp build/libpcre-npm.js src/libpcre-npm.js
-
 # Build ESM and CJS TypeScript outputs
 npx tsc -p tsconfig.esm.json
 npx tsc -p tsconfig.cjs.json
 
 echo "📦 Creating CJS package.json..."
 echo '{"type": "commonjs"}' > dist/cjs/package.json
-
-# Run Vite for production bundling (tree-shaking, minification, etc.)
-npx vite build
-
-# Clean up the copied WASM JS from src/ after Vite build
-rm -f src/libpcre-npm.js
 
 # Check if the build was successful
 if [ -f "build/libpcre-npm.js" ]; then

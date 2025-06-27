@@ -26,8 +26,7 @@
     "test:performance": "vitest run test/performance.test.js --reporter=verbose",
     "test:legacy": "node test/test.js",
     "init:submodules": "./scripts/init-submodules.sh",
-    "preflight": "./scripts/preflight.sh",
-    "build:vite": "vite build"
+    "preflight": "./scripts/preflight.sh"
   },
   "keywords": [
     "pcre",
@@ -49,7 +48,6 @@
     "@types/emscripten": "latest",
     "@vitest/ui": "latest",
     "typescript": "latest",
-    "vite": "^6.3.5",
     "vitest": "latest"
   },
   "files": [

@@ -25,7 +25,7 @@ npm install @syntropiq/libpcre-ts
 - This package provides both ESM (`dist/esm/index.js`) and CJS (`dist/cjs/index.cjs`) outputs.
 - The correct entry point is automatically selected via the `exports` field in `package.json`.
 - TypeScript types are available at `dist/types/index.d.ts`.
-- The build system uses Vite and TypeScript for modern, standards-compliant output.
+- The build system uses TypeScript for modern, standards-compliant output.
 
 ### Usage
 
@@ -57,7 +57,7 @@ All outputs and types are generated in the `dist/` directory. No post-processing
 - **Dual ESM/CJS support:** This package now ships with both modern ESM and legacy CommonJS builds, fully tree-shakable and optimized for all environments.
 - **Automatic WASM handling:** The WebAssembly and its JS loader are bundled for both module formats. No manual copying or import hacks needed.
 - **TypeScript types:** Complete type definitions are generated and published for both ESM and CJS consumers.
-- **Modern build system:** Uses Vite for bundling/optimization and TypeScript for type safety. All build, setup, and submodule steps are automated via scripts.
+- **Modern build system:** Uses TypeScript for bundling/optimization and type safety. All build, setup, and submodule steps are automated via scripts.
 
 **Usage:**
 - In ESM (Node.js or browser):
@@ -529,7 +529,7 @@ This will:
 - Check/install required tools (git, cmake, emcc)
 - Initialize submodules
 - Build the WASM binary and loader
-- Build ESM and CJS outputs (with Vite and TypeScript)
+- Build ESM and CJS outputs (with TypeScript)
 - Generate and copy type definitions
 
 **Manual build steps are no longer required.**

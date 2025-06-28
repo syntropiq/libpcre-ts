@@ -1,5 +1,5 @@
 import { test, expect, beforeAll, describe } from 'vitest';
-import { PCRE } from '../../dist/index.js';
+import { PCRE } from '../../dist/esm/index.js';
 
 describe('Lookahead and Lookbehind', () => {
   let pcre;

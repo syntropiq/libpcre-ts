@@ -118,4 +118,3 @@ export declare class PCRE {
     get constants(): PCREConstants;
 }
 export default createPCREModule;
-//# sourceMappingURL=index.d.ts.map

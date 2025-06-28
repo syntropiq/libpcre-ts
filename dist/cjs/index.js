@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PCRE = void 0;
-const libpcre_npm_1 = __importDefault(require("./libpcre-npm"));
+const libpcre_npm_js_1 = __importDefault(require("./libpcre-npm.js"));
 class PCRE {
     constructor() {
         this.module = null;
@@ -15,7 +15,7 @@ class PCRE {
      * @returns Promise that resolves when the module is ready
      */
     async init() {
-        const result = await (0, libpcre_npm_1.default)();
+        const result = await (0, libpcre_npm_js_1.default)();
         this.module = result;
     }
     /**
@@ -136,4 +136,4 @@ class PCRE {
 }
 exports.PCRE = PCRE;
 // Export the module creation function as default
-exports.default = libpcre_npm_1.default;
+exports.default = libpcre_npm_js_1.default;

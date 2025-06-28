@@ -1,4 +1,4 @@
-import createPCREModule from './libpcre-npm';
+import createPCREModule from './libpcre-npm.js';
 export interface PCREMatch {
     value: string;
     index: number;

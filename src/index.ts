@@ -1,6 +1,6 @@
 // TypeScript implementation for the PCRE convenience class
 
-import createPCREModule from './libpcre-npm';
+import createPCREModule from './libpcre-npm.js';
 
 // Type imports - these will be resolved during compilation
 export interface PCREMatch {

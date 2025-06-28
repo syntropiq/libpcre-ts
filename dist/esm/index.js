@@ -1,5 +1,5 @@
 // TypeScript implementation for the PCRE convenience class
-import createPCREModule from './libpcre-npm';
+import createPCREModule from './libpcre-npm.js';
 export class PCRE {
     constructor() {
         this.module = null;

@@ -1,5 +1,5 @@
 import { test, expect, beforeAll, describe } from 'vitest';
-import { PCRE } from '../../dist/esm/index';
+import { PCRE } from '../../dist/esm/index.js';
 
 describe('Basic PCRE Initialization', () => {
   let pcre;

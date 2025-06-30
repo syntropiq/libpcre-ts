@@ -46,10 +46,22 @@ describe('Groups and Captures', () => {
       expect(result).toBeTruthy();
       const namedGroups = regex.getNamedGroups();
       expect(namedGroups).toHaveProperty('year');
-      expect(namedGroups).toHaveProperty('month'); 
+      expect(namedGroups).toHaveProperty('month');
       expect(namedGroups).toHaveProperty('day');
     } catch (error) {
       console.error('FATAL ERROR in named capturing groups test:', error);
+      throw error;
+    }
+  });
+
+  test('should handle duplicate named capturing groups with PCRE_DUPNAMES option', () => {
+    try {
+      const constants = pcre.constants;
+      const regex = pcre.compile('^a(?<b>b)c(?<b>d)e$', constants.DUPNAMES);
+      const result = regex.test('abcde', 0);
+      expect(result).toBeTruthy();
+    } catch (error) {
+      console.error('FATAL ERROR in duplicate named capturing groups test:', error);
       throw error;
     }
   });
